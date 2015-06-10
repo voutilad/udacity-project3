@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href="{{url_for('static', filename='css/default.css')}}" rel="stylesheet">
+    <title>
+      The Catalog App
+    </title>
+  </head>
+  <body>
+    <div class="banner">
+      {% block banner %}
+        Welcome to the Catalog App!
+      {% endblock %}
+    </div>
+    <div class="main">
+      {% block main %}
+        Sup, girl.
+      {% endblock %}
+    </div>
+    <div class="footer">
+      {% block footer %}
+        &copy; 2015 - Dave Voutila
+      {% endblock %}
+    </div>
+  </body>
+</html>

@@ -8,7 +8,7 @@ def index():
     s = session()
     categories = s.query(Category).all()
 
-    return render_template('index.html', categories=categories)
+    return render_template('main.html', categories=categories)
 
 @app.route('/category/<int:category_id>')
 def showCategory(category_id):
