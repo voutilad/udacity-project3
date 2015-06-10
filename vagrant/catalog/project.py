@@ -4,11 +4,18 @@ app = Flask(__name__)
 
 @app.route('/')
 @app.route('/index.html')
-def Index():
+def index():
     s = session()
     categories = s.query(Category).all()
 
     return render_template('index.html', categories=categories)
+
+@app.route('/category/<int:category_id>')
+def showCategory(category_id):
+    s = session()
+    category = s.query(Category).filter(Category.id == category_id).one()
+
+    return render_template('category.html', category=category)
 
 @app.route('/category/<int:category_id>/create')
 def newCategory(category_id):
