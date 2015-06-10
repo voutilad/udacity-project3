@@ -14,6 +14,20 @@ def HelloWorld():
 
     return output
 
+@app.route('/category/<int:category_id>/create')
+def newCategory(category_id):
+    return 'New category page with id: ' + str(category_id)
+
+@app.route('/category/<int:category_id>/delete')
+def deleteCategory(category_id):
+    return 'Delete page for category id: ' + str(category_id)
+
+@app.route('/category/<int:category_id>/edit')
+def editCategory(category_id):
+    return 'Edit page for category_id: ' + str(category_id)
+
+
+
 if __name__ == '__main__':
     app.debug = True
     app.run(host = '0.0.0.0', port=5000)

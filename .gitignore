@@ -60,3 +60,4 @@ target/
 # Added by voutilad@gmail.com
 *.html
 .vagrant
+.DS_Store
