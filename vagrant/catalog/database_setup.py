@@ -2,7 +2,7 @@ import sys
 
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.exc import OperationalError
 from sqlalchemy import create_engine
 
@@ -26,23 +26,40 @@ class Item(Base):
     category = relationship(Category)
     #TODO: use backref capability for cascading deletes?
 
-engine = create_engine('postgresql://vagrant@/' + __DATABASE_NAME)
 
-try:
-    Base.metadata.create_all(engine)
-
-except OperationalError:
-    print 'Database does not exist. Attempting to first create database ' + __DATABASE_NAME
+def initialize():
+    engine = create_engine('postgresql://vagrant@/' + __DATABASE_NAME)
 
     try:
-        #See: http://stackoverflow.com/questions/6506578/how-to-create-a-new-database-using-sqlalchemy
-        conn = create_engine('postgresql://vagrant@/postgres').connect()
-        conn.execute('commit')
-        conn.execute('CREATE DATABASE ' + __DATABASE_NAME + ';')
-        conn.close()
-
         Base.metadata.create_all(engine)
+        return True
 
-    except Exception as e:
-        print 'Still failed. :-('
-        print e
+    except OperationalError:
+        print 'Database does not exist. Attempting to first create database ' + __DATABASE_NAME
+
+        try:
+            #See: http://stackoverflow.com/questions/6506578/how-to-create-a-new-database-using-sqlalchemy
+            conn = create_engine('postgresql://vagrant@/postgres').connect()
+            conn.execute('commit')
+            conn.execute('CREATE DATABASE ' + __DATABASE_NAME + ';')
+            conn.close()
+
+            Base.metadata.create_all(engine)
+            return True
+
+        except Exception as e:
+            print 'Still failed:'
+            print e
+
+        return False
+
+def session():
+    engine = create_engine('postgresql://vagrant@/' + __DATABASE_NAME)
+
+    session = sessionmaker()
+    session.configure(bind=engine)
+    return session()
+
+if __name__ == '__main__':
+    print 'Initializing database...'
+    initialize()
