@@ -1,18 +1,14 @@
-from flask import Flask
+from flask import Flask, render_template
 from database_setup import Category, Item, session
 app = Flask(__name__)
 
 @app.route('/')
-@app.route('/hello')
-def HelloWorld():
+@app.route('/index.html')
+def Index():
     s = session()
     categories = s.query(Category).all()
 
-    output = ''
-    for category in categories:
-        output += '<div>{cat}</div>'.format(cat=category.name)
-
-    return output
+    return render_template('index.html', categories=categories)
 
 @app.route('/category/<int:category_id>/create')
 def newCategory(category_id):
