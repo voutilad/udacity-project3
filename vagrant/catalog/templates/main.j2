@@ -1,0 +1,10 @@
+{% extends "base.j2" %}
+{% block main %}
+  {% for category in categories %}
+    <div class="category">
+      <a href="{{url_for('showCategory', category_id=category.id)}}">
+        <span class="categoryTitle">{{category.name}}</span>
+      </a>
+    </div>
+  {% endfor %}
+{% endblock %}

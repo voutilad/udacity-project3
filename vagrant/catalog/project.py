@@ -8,14 +8,15 @@ def index():
     s = session()
     categories = s.query(Category).all()
 
-    return render_template('main.html', categories=categories)
+    return render_template('main.j2', categories=categories)
 
 @app.route('/category/<int:category_id>')
 def showCategory(category_id):
     s = session()
     category = s.query(Category).filter(Category.id == category_id).one()
+    items = s.query(Item).filter(Item.category_id == category.id).all()
 
-    return render_template('category.html', category=category)
+    return render_template('category.j2', category=category, items=items)
 
 @app.route('/category/<int:category_id>/create')
 def newCategory(category_id):
