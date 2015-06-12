@@ -1,22 +1,21 @@
 {% extends "base.j2" %}
 {% block main %}
-  <div class="category">
-    {{category.name}}
-  </div>
-  <div class="itemsList">
-    {% if items %}
-      {% for item in items %}
-        <div class="item">
-          <span class="itemName">{{item.name}}</span>
-          <div class="itemDescription">
-            {{ item.description }}
-          </div>
+  <h1>{{category.name}}</h1>
+  {% if items %}
+    {% for item in items %}
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{item.name}}</h3>
+          <button type="button" class="btn btn-default">Delete</button>
         </div>
-      {% endfor %}
-    {% else %}
-      <div class="item">
-        <span class="info">Empty!</span>
+        <div class="panel-body">
+          {{ item.description }}
+        </div>
       </div>
-    {% endif %}
-  <div>
+    {% endfor %}
+  {% else %}
+    <div class="alert alert-warning">
+      <strong>Empty Category!</strong>
+    </div>
+  {% endif %}
 {% endblock %}
