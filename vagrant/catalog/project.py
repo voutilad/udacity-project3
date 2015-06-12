@@ -1,3 +1,4 @@
+import ConfigParser
 from flask import Flask, render_template
 from database_setup import Category, Item, session
 app = Flask(__name__)
@@ -33,5 +34,10 @@ def editCategory(category_id):
 
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run(host = '0.0.0.0', port=5000)
+    config = ConfigParser.SafeConfigParser(
+        {'debug': True, 'host': '0.0.0.0', 'port': 5000})
+    config.read('config.cfg')
+
+    app.debug = config.getboolean('server', 'debug')
+    app.run(host = config.get('server', 'host'),
+        port=config.getint('server', 'port'))

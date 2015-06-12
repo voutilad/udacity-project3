@@ -27,8 +27,8 @@ class Item(Base):
     #TODO: use backref capability for cascading deletes?
 
 
-def initialize():
-    engine = create_engine('postgresql://vagrant@/' + __DATABASE_NAME)
+def initialize(uri):
+    engine = create_engine(uri)
 
     try:
         Base.metadata.create_all(engine)
@@ -39,7 +39,7 @@ def initialize():
 
         try:
             #See: http://stackoverflow.com/questions/6506578/how-to-create-a-new-database-using-sqlalchemy
-            conn = create_engine('postgresql://vagrant@/postgres').connect()
+            conn = create_engine(uri).connect()
             conn.execute('commit')
             conn.execute('CREATE DATABASE ' + __DATABASE_NAME + ';')
             conn.close()
