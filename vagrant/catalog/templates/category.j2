@@ -2,7 +2,7 @@
 {% block main %}
   <div class="row">
     <div class="col-xs-2"></div>
-    <div class="col-xs-6">
+    <div class="col-xs-6 centered">
       <h1>{{category.name}}</h1>
       {% if items %}
         {% for item in items %}
@@ -20,11 +20,12 @@
           </div>
         {% endfor %}
       {% else %}
-        <div class="alert alert-warning" style="position:relative; width: 25%;">
+        <div class="alert alert-warning">
           <strong>This category has no items!</strong>
         </div>
         <div class="btn-group">
-          <a href="#" class="btn btn-default">New Item</a>
+          <a href="{{url_for('deleteCategory', category_id=category.id)}}" class="btn btn-default">Delete Category</a>
+          <a href="#" class="btn btn-default">Add New Item</a>
         </div>
       {% endif %}
     </div>

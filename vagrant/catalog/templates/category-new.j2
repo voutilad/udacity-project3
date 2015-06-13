@@ -1,0 +1,27 @@
+{% extends "base.j2" %}
+{% block main %}
+  <div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+      <h3>New Category</h3>
+      <form>
+        <fieldset>
+          <div class="form-group">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Name" aria-describedby="Category Name">
+            </div>
+          </div>
+        </fieldset>
+      </form>
+      <div class="row">
+        <a href="{{url_for('home')}}">
+          <button type="button" class="btn btn-default">Cancel</button>
+        </a>
+        <a href="#">
+          <button type="button" class="btn btn-default">Save</button>
+        </a>
+      </div>
+    </div>
+    <div class="col-md-4"></div>
+  </div>
+{% endblock %}

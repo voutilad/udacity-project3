@@ -9,7 +9,7 @@ body {
 }
 
 .main {
-  /* text-align: center; */
+
 }
 
 .container {
@@ -32,4 +32,8 @@ body {
 
 .panel {
   text-align: left;
+}
+
+.centered {
+  text-align: center;
 }
