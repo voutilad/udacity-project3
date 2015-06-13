@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="col-md-5">
-      <h3>Recent Items</h3>
+      <h3>Your Recent Items</h3>
       <div class="list-group">
       {% for item in items %}
         <a class="list-group-item" href="{{url_for('viewItem', item_id=item.id)}}">

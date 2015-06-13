@@ -1,9 +1,15 @@
 {% extends "base.j2" %}
 {% block main %}
-  <h3>{{ item.name }}</h3>
-  <p>{{ item.description }}</p>
-  <div class="row">
-    <button type="button" class="btn btn-default">Edit</button>
-    <button type="button" class="btn btn-default">Delete</button>
+<div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
+    <h3>{{ item.name }}</h3>
+    <p>{{ item.description }}</p>
+    <div class="row">
+      <a href="{{url_for('editItem', item_id=item.id)}}"><button type="button" class="btn btn-default">Edit</button></a>
+      <button type="button" class="btn btn-default">Delete</button>
+    </div>
   </div>
+  <div class="col-md-4"</div>
+</div>
 {% endblock %}

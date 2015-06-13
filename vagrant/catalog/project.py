@@ -3,6 +3,14 @@ from flask import Flask, render_template
 from database_setup import Category, Item, session
 app = Flask(__name__)
 
+def getItem(item_id):
+    s = session()
+    return s.query(Item).filter(Item.id == item_id).one()
+
+def getCategories():
+    s = session()
+    return s.query(Category).all()
+
 @app.route('/')
 @app.route('/catalog')
 def index():
@@ -34,13 +42,12 @@ def editCategory(category_id):
 
 @app.route('/catalog/item/<int:item_id>')
 def viewItem(item_id):
-    s = session()
-    item = s.query(Item).filter(Item.id == item_id).one()
-    return render_template('item.j2', item=item)
+    return render_template('item.j2', item=getItem(item_id))
 
 @app.route('/catalog/item/<int:item_id>/edit')
 def editItem(item_id):
-    return 'Edit page for item with id: ' + str(item_id)
+    return render_template('item-editor.j2',
+        item=getItem(item_id), categories=getCategories())
 
 if __name__ == '__main__':
     config = ConfigParser.SafeConfigParser(

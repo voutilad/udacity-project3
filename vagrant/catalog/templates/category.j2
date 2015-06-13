@@ -1,27 +1,33 @@
 {% extends "base.j2" %}
 {% block main %}
-  <h1>{{category.name}}</h1>
-  {% if items %}
-    {% for item in items %}
-      <div class="panel panel-default">
-        <div class="panel-heading clearfix">
-          <h3 class="panel-title pull-left" style="padding-top: 7.5px;">{{item.name}}</h3>
-          <div class="btn-group pull-right">
-            <a href="#" class="btn btn-default btn-small">Edit</a>
-            <a href="#" class="btn btn-default btn-small">Delete</a>
+  <div class="row">
+    <div class="col-xs-2"></div>
+    <div class="col-xs-6">
+      <h1>{{category.name}}</h1>
+      {% if items %}
+        {% for item in items %}
+          <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+              <h3 class="panel-title pull-left" style="padding-top: 7.5px;">{{item.name}}</h3>
+              <div class="btn-group pull-right">
+                <a href="{{url_for('editItem', item_id=item.id)}}" class="btn btn-default btn-small">Edit</a>
+                <a href="#" class="btn btn-default btn-small">Delete</a>
+              </div>
+            </div>
+            <div class="panel-body">
+              {{ item.description }}
+            </div>
           </div>
+        {% endfor %}
+      {% else %}
+        <div class="alert alert-warning" style="position:relative; width: 25%;">
+          <strong>This category has no items!</strong>
         </div>
-        <div class="panel-body">
-          {{ item.description }}
+        <div class="btn-group">
+          <a href="#" class="btn btn-default">New Item</a>
         </div>
-      </div>
-    {% endfor %}
-  {% else %}
-    <div class="alert alert-warning" style="position:relative; width: 25%;">
-      <strong>This category has no items!</strong>
+      {% endif %}
     </div>
-    <div class="btn-group">
-      <a href="#" class="btn btn-default">New Item</a>
-    </div>
-  {% endif %}
+    <div class="col-xs-2"></div>
+  </div>
 {% endblock %}
