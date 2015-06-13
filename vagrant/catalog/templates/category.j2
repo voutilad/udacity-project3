@@ -3,10 +3,13 @@
   <h1>{{category.name}}</h1>
   {% if items %}
     {% for item in items %}
-      <div class="panel panel-primary">
-        <div class="panel-heading">
-          <h3 class="panel-title">{{item.name}}</h3>
-          <button type="button" class="btn btn-default">Delete</button>
+      <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+          <h3 class="panel-title pull-left" style="padding-top: 7.5px;">{{item.name}}</h3>
+          <div class="btn-group pull-right">
+            <a href="#" class="btn btn-default btn-small">Edit</a>
+            <a href="#" class="btn btn-default btn-small">Delete</a>
+          </div>
         </div>
         <div class="panel-body">
           {{ item.description }}
@@ -14,8 +17,11 @@
       </div>
     {% endfor %}
   {% else %}
-    <div class="alert alert-warning">
-      <strong>Empty Category!</strong>
+    <div class="alert alert-warning" style="position:relative; width: 25%;">
+      <strong>This category has no items!</strong>
+    </div>
+    <div class="btn-group">
+      <a href="#" class="btn btn-default">New Item</a>
     </div>
   {% endif %}
 {% endblock %}

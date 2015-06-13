@@ -1,0 +1,9 @@
+{% extends "base.j2" %}
+{% block main %}
+  <h3>{{ item.name }}</h3>
+  <p>{{ item.description }}</p>
+  <div class="row">
+    <button type="button" class="btn btn-default">Edit</button>
+    <button type="button" class="btn btn-default">Delete</button>
+  </div>
+{% endblock %}
