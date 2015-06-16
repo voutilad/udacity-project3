@@ -26,6 +26,13 @@ class Item(Base):
     category = relationship(Category)
     #TODO: use backref capability for cascading deletes?
 
+    def __str__(self):
+        s = '<item ['
+        s += 'name: ' + self.name + ', '
+        s += 'description: ' + self.description + ', '
+        s += 'category_id: ' + str(self.category_id) + ' ]>'
+        return s
+
 
 def initialize(uri):
     engine = create_engine(uri)

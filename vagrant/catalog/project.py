@@ -1,25 +1,9 @@
 import ConfigParser
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from database_setup import Category, Item, session
+import db
 app = Flask(__name__)
 
-def getItem(item_id):
-    s = session()
-    return s.query(Item).filter(Item.id == item_id).one()
-
-def getCategory(category_id):
-    s = session()
-    return s.query(Category).filter(Category.id == category_id).one()
-
-def getItems(category_id):
-    s = session()
-    return s.query(Item).filter(Item.category_id == category_id).all()
-
-def getCategories():
-    s = session()
-    return s.query(Category).all()
-
-###############################################
 
 @app.route('/')
 @app.route('/catalog')
@@ -33,24 +17,55 @@ def home():
 @app.route('/catalog/<int:category_id>')
 def showCategory(category_id):
     return render_template('category.j2',
-        category=getCategory(category_id), items=getItems(category_id))
+        category=db.getCategory(category_id), items=db.getItems(category_id))
 
 @app.route('/catalog/category/<int:category_id>/delete')
 def deleteCategory(category_id):
-    return render_template('delete.j2', thing=getCategory(category_id))
+    return render_template('delete.j2', thing=db.getCategory(category_id))
+
+@app.route('/catalog/postme', methods=['POST'])
+def posttest():
+    return 'Got a post, dude.\n' + str(request.json) + '\n'
 
 @app.route('/catalog/category/<int:category_id>/edit')
 def editCategory(category_id):
     return 'Edit page for category_id: ' + str(category_id)
 
-@app.route('/catalog/item/<int:item_id>')
+@app.route('/catalog/item/<int:item_id>', methods=['GET'])
 def viewItem(item_id):
-    return render_template('item.j2', item=getItem(item_id))
+    return render_template('item.j2', item=db.getItem(item_id))
 
 @app.route('/catalog/item/<int:item_id>/edit')
 def editItem(item_id):
     return render_template('item-editor.j2',
-        item=getItem(item_id), categories=getCategories())
+        item=db.getItem(item_id), categories=db.getCategories())
+
+@app.route('/catalog/item/<int:item_id>/delete')
+def confirmItemDelete(item_id):
+    item = db.getItem(item_id)
+    return render_template('delete.j2', thing=item)
+
+@app.route('/catalog/item/create', methods=['POST'])
+def createItem():
+    if request.json is not None:
+        data = request.json
+        item = Item(name=data['name'],
+            description=data['description'],
+            category_id=data['category_id'])
+        db.putItem(item)
+
+        return 'Nice!'
+    else:
+        return 'ERROR!'
+
+@app.route('/catalog/item/delete', methods=['POST'])
+def deleteItem():
+    if request.json is not None:
+        data = request.json
+        db.deleteItem(data['item_id'])
+        return 'Nice!'
+    else:
+        return 'ERROR!'
 
 @app.route('/catalog/category/new')
 def newCategory():
