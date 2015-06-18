@@ -18,7 +18,7 @@ def init_db():
     from models import Item, Category
 
     try:
-        Base.metadata.create_all(engine)
+        Base.metadata.create_all(create_engine(__DATABAUSE_URI, echo=True))
         return True
 
     except OperationalError:
@@ -31,7 +31,7 @@ def init_db():
             conn.execute('CREATE DATABASE ' + __DATABASE_NAME + ';')
             conn.close()
 
-            Base.metadata.create_all(engine)
+            Base.metadata.create_all(create_engine(__DATABAUSE_URI, echo=True))
             return True
 
         except Exception as e:
@@ -43,4 +43,5 @@ def init_db():
 
 if __name__ == '__main__':
     print 'Initializing database...'
-    init_db()
+    import database
+    database.init_db()
