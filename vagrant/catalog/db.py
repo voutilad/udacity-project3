@@ -1,46 +1,34 @@
-from database_setup import Category, Item, session
+from models import Category, Item
+from database import db_session
 
 
 def getItem(item_id):
-    s = session()
-    item = s.query(Item).filter(Item.id == item_id).one()
-    s.close()
+    item = db_session.query(Item).filter(Item.id == item_id).one()
     return item
 
 def putItem(item):
-    s = session()
-    s.add(item)
+    db_session.add(item)
     print 'Creating new item: ' + str(item)
-    s.commit()
-    s.close()
+    db_session.commit()
 
 def deleteItem(item_id):
     item = getItem(item_id)
     if item is None:
         print 'Cannot delete non-existant item with id: ' + str(item_id)
     else:
-        s = session()
-        s.delete(item)
-        s.flush()
-        s.commit()
-        s.close()
+        db_session.delete(item)
+        db_session.flush()
         print 'Deleted item ' + str(item)
 
 
 def getCategory(category_id):
-    s = session()
-    category = s.query(Category).filter(Category.id == category_id).one()
-    s.close()
+    category = db_session.query(Category).filter(Category.id == category_id).one()
     return category
 
 def getItems(category_id):
-    s = session()
-    items =  s.query(Item).filter(Item.category_id == category_id).all()
-    s.close()
+    items =  db_session.query(Item).filter(Item.category_id == category_id).all()
     return items
 
 def getCategories():
-    s = session()
-    categories = s.query(Category).all()
-    s.close()
+    categories = db_session.query(Category).all()
     return categories

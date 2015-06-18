@@ -1,6 +1,7 @@
 import ConfigParser
 from flask import Flask, render_template, request
-from database_setup import Category, Item, session
+from models import Category, Item
+from database import db_session
 import db
 app = Flask(__name__)
 
@@ -8,9 +9,8 @@ app = Flask(__name__)
 @app.route('/')
 @app.route('/catalog')
 def home():
-    s = session()
-    categories = s.query(Category).all()
-    items = s.query(Item).limit(20).all()
+    categories = db_session.query(Category).all()
+    items = db_session.query(Item).limit(20).all()
 
     return render_template('catalog.j2', categories=categories, items=items)
 
@@ -71,6 +71,9 @@ def deleteItem():
 def newCategory():
     return render_template('category-new.j2')
 
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
 ############################################
 
