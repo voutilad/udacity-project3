@@ -4,21 +4,29 @@
     <div class="col-md-5">
       <h3>Categories</h3>
       <div class="list-group">
-      {% for category in categories %}
+      {% if not categories %}
+        You have no categories! Why not <a href="{{url_for('newCategory')}}">create</a> one?
+      {% else %}
+        {% for category in categories %}
         <a class="list-group-item" href="{{url_for('showCategory', category_id=category.id)}}">
           {{category.name}}
         </a>
-      {% endfor %}
+        {% endfor %}
+      {% endif %}
       </div>
     </div>
     <div class="col-md-5">
       <h3>Your Recent Items</h3>
       <div class="list-group">
-      {% for item in items %}
+      {% if not items %}
+        You have no recent items! Maybe trying viewing some?
+      {% else %}
+        {% for item in items %}
         <a class="list-group-item" href="{{url_for('viewItem', item_id=item.id)}}">
           {{item.name}}
         </a>
-      {% endfor %}
+        {% endfor %}
+      {% endif %}
       </div
     </div>
   </div>

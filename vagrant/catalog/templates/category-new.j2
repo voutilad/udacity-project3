@@ -4,11 +4,14 @@
     <div class="col-md-4"></div>
     <div class="col-md-4">
       <h3>New Category</h3>
-      <form>
+      <form id="createCategory" action="{{url_for('newCategory')}}">
         <fieldset>
           <div class="form-group">
             <div class="input-group">
-              <input type="text" class="form-control" placeholder="Name" aria-describedby="Category Name">
+              <input name="name" type="text" class="form-control"
+                placeholder="Name" aria-describedby="Category Name">
+              <input name="description" type="text" class="form-control"
+                placeholder="Description" aria-describedby="Description">
             </div>
           </div>
         </fieldset>

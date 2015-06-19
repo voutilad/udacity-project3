@@ -14,12 +14,12 @@ def home():
 
     return render_template('catalog.j2', categories=categories, items=items)
 
-@app.route('/catalog/<int:category_id>')
+@app.route('/catalog/<string:category_id>')
 def showCategory(category_id):
     return render_template('category.j2',
         category=db.getCategory(category_id), items=db.getItems(category_id))
 
-@app.route('/catalog/category/<int:category_id>/delete')
+@app.route('/catalog/category/<string:category_id>/delete')
 def deleteCategory(category_id):
     return render_template('delete.j2', thing=db.getCategory(category_id))
 
@@ -27,20 +27,20 @@ def deleteCategory(category_id):
 def posttest():
     return 'Got a post, dude.\n' + str(request.json) + '\n'
 
-@app.route('/catalog/category/<int:category_id>/edit')
+@app.route('/catalog/category/<string:category_id>/edit')
 def editCategory(category_id):
     return 'Edit page for category_id: ' + str(category_id)
 
-@app.route('/catalog/item/<int:item_id>', methods=['GET'])
+@app.route('/catalog/item/<string:item_id>', methods=['GET'])
 def viewItem(item_id):
     return render_template('item.j2', item=db.getItem(item_id))
 
-@app.route('/catalog/item/<int:item_id>/edit')
+@app.route('/catalog/item/<string:item_id>/edit')
 def editItem(item_id):
     return render_template('item-editor.j2',
         item=db.getItem(item_id), categories=db.getCategories())
 
-@app.route('/catalog/item/<int:item_id>/delete')
+@app.route('/catalog/item/<string:item_id>/delete')
 def confirmItemDelete(item_id):
     item = db.getItem(item_id)
     return render_template('delete.j2', thing=item)

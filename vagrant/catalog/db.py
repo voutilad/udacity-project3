@@ -32,3 +32,14 @@ def getItems(category_id):
 def getCategories():
     categories = db_session.query(Category).all()
     return categories
+
+
+def slugify(name):
+    """ Creates a Search Engine Friendly (SEF) aka 'slugified' id from the
+        given string. This can be used to simplify URLs that better map to
+        underlying object ids and give a deterministic way to generate
+        id's for persistence from a user provided name value.
+
+        Reference: http://flask.pocoo.org/snippets/5/
+         
+    """
