@@ -8,18 +8,22 @@ def getItem(item_id):
 
 def putItem(item):
     db_session.add(item)
-    print 'Creating new item: ' + str(item)
+    print '[db]>> Creating new item: ' + str(item)
     db_session.commit()
 
 def deleteItem(item_id):
     item = getItem(item_id)
     if item is None:
-        print 'Cannot delete non-existant item with id: ' + str(item_id)
+        print '[db]>> Cannot delete non-existant item with id: ' + str(item_id)
     else:
         db_session.delete(item)
         db_session.flush()
-        print 'Deleted item ' + str(item)
+        print '[db]>> Deleted item ' + str(item)
 
+def putCategory(category):
+    db_session.add(category)
+    print '[db]>> Creating category: ' + str(category)
+    db_session.commit()
 
 def getCategory(category_id):
     category = db_session.query(Category).filter(Category.id == category_id).one()
@@ -32,14 +36,3 @@ def getItems(category_id):
 def getCategories():
     categories = db_session.query(Category).all()
     return categories
-
-
-def slugify(name):
-    """ Creates a Search Engine Friendly (SEF) aka 'slugified' id from the
-        given string. This can be used to simplify URLs that better map to
-        underlying object ids and give a deterministic way to generate
-        id's for persistence from a user provided name value.
-
-        Reference: http://flask.pocoo.org/snippets/5/
-         
-    """

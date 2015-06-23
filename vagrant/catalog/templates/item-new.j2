@@ -3,20 +3,20 @@
   <div class="row">
     <div class="col-md-4"></div>
     <div class="col-md-4">
-      <h3>New Category</h3>
-      <form id="createCategory" method="POST" action="{{url_for('newCategory')}}">
+      <h3>New Item in {{ category_name }}</h3>
+      <form id="createCategory" method="POST" action="{{url_for('newItem', category_id=category_id)}}">
         <fieldset>
           <div class="form-group">
             <div class="input-group">
               <input name="name" type="text" class="form-control"
-                placeholder="Name" aria-describedby="Category Name">
+                placeholder="Item Name" aria-describedby="Category Name">
               <input name="description" type="text" class="form-control"
                 placeholder="Description" aria-describedby="Description">
             </div>
           </div>
         </fieldset>
         <div class="row">
-          <a href="{{url_for('home')}}">
+          <a href="{{url_for('showCategory', category_id=category_id)}}">
             <button type="button" class="btn btn-default">Cancel</button>
           </a>
           <a href="#">

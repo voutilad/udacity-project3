@@ -1,8 +1,8 @@
 import ConfigParser
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for, redirect
 from models import Category, Item
 from database import db_session
-import db
+import db, utils
 app = Flask(__name__)
 
 
@@ -14,24 +14,51 @@ def home():
 
     return render_template('catalog.j2', categories=categories, items=items)
 
+### categories
+
 @app.route('/catalog/<string:category_id>')
 def showCategory(category_id):
-    return render_template('category.j2',
-        category=db.getCategory(category_id), items=db.getItems(category_id))
+    if request.method == 'POST':
+        return 'Unimplemented :-('
+    else:
+        return render_template('category.j2',
+            category=db.getCategory(category_id), items=db.getItems(category_id))
+
+@app.route('/catalog/category/new', methods=['GET', 'POST'])
+def newCategory():
+    if request.method == 'POST':
+        name = request.form['name']
+        category_id = utils.slugify(name)
+        db.putCategory(Category(name=name, id=category_id))
+        return redirect(url_for('showCategory', category_id=category_id))
+    else:
+        return render_template('category-new.j2')
 
 @app.route('/catalog/category/<string:category_id>/delete')
 def deleteCategory(category_id):
     return render_template('delete.j2', thing=db.getCategory(category_id))
 
-@app.route('/catalog/postme', methods=['POST'])
-def posttest():
-    return 'Got a post, dude.\n' + str(request.json) + '\n'
-
 @app.route('/catalog/category/<string:category_id>/edit')
 def editCategory(category_id):
     return 'Edit page for category_id: ' + str(category_id)
 
-@app.route('/catalog/item/<string:item_id>', methods=['GET'])
+### items
+
+@app.route('/catalog/<string:category_id>/newitem', methods=['GET', 'POST'])
+def newItem(category_id):
+    if request.method == 'POST':
+        item_name = request.form['name']
+        item_description = request.form['description']
+        item_id = utils.slugify(item_name)
+        db.putItem(Item(name=item_name, description=item_description,
+            id=item_id, category_id=category_id))
+        return redirect(url_for('showCategory', category_id=category_id))
+    else:
+        category = db.getCategory(category_id)
+        return render_template('item-new.j2', category_name=category.name,
+            category_id=category_id)
+
+@app.route('/catalog/item/<string:item_id>')
 def viewItem(item_id):
     return render_template('item.j2', item=db.getItem(item_id))
 
@@ -45,7 +72,7 @@ def confirmItemDelete(item_id):
     item = db.getItem(item_id)
     return render_template('delete.j2', thing=item)
 
-@app.route('/catalog/item/create', methods=['POST'])
+@app.route('/catalog/item/new', methods=['POST'])
 def createItem():
     if request.json is not None:
         data = request.json
@@ -67,9 +94,6 @@ def deleteItem():
     else:
         return 'ERROR!'
 
-@app.route('/catalog/category/new')
-def newCategory():
-    return render_template('category-new.j2')
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
