@@ -22,7 +22,7 @@
         You have no recent items! Maybe trying viewing some?
       {% else %}
         {% for item in items %}
-        <a class="list-group-item" href="{{url_for('viewItem', item_id=item.id, catalog_id=item.catalog_id)}}">
+        <a class="list-group-item" href="{{url_for('viewItem', item_id=item.id, category_id=item.category_id)}}">
           {{item.name}}
         </a>
         {% endfor %}

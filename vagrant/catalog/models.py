@@ -26,6 +26,7 @@ class Item(Base):
     def __str__(self):
         s = '<item ['
         s += 'name: ' + self.name + ', '
+        s += 'id: ' + self.id + ', '
         s += 'description: ' + self.description + ', '
         s += 'category_id: ' + str(self.category_id) + ' ]>'
         return s

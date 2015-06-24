@@ -63,18 +63,21 @@ def newItem(category_id):
 def viewItem(item_id, category_id):
     return render_template('item.j2', item=db.getItem(item_id, category_id))
 
-@app.route('/catalog/item/<string:item_id>/edit')
-def editItem(item_id):
+@app.route('/catalog/<string:category_id>/<string:item_id>/edit')
+def editItem(item_id, category_id):
     return render_template('item-editor.j2',
-        item=db.getItem(item_id), categories=db.getCategories())
+        item=db.getItem(item_id, category_id), categories=db.getCategories())
 
 @app.route('/catalog/<string:category_id>/<string:item_id>/delete', methods=['GET', 'POST'])
 def deleteItem(item_id, category_id):
     if request.method == 'POST':
         db.deleteItem(item_id, category_id)
-        return 'TODO: DELETED!'
+        if request.referrer:
+            return redirect(request.referrer)
+        else:
+            return redirect(url_for('showCategory', category_id=category_id))
     else:
-        return 'TODO! Sup girl'
+        return 'TODO! Sup girl. You want a delete confirmation or something?'
 
 @app.route('/catalog/item/new', methods=['POST'])
 def createItem():

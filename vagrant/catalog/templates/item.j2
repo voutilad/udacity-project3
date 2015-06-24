@@ -6,8 +6,8 @@
     <h3>{{ item.name }}</h3>
     <p>{{ item.description }}</p>
     <div class="row">
-      <a href="{{url_for('editItem', item_id=item.id)}}"><button type="button" class="btn btn-default">Edit</button></a>
-      <a href="{{url_for('confirmItemDelete', item_id=item.id)}}"><button type="button" class="btn btn-default">Delete</button></a>
+      <a href="{{url_for('editItem', item_id=item.id, category_id=item.category_id)}}"><button type="button" class="btn btn-default">Edit</button></a>
+      <a href="#"><button type="button" class="btn btn-default">Delete</button></a>
     </div>
   </div>
   <div class="col-md-4"</div>
