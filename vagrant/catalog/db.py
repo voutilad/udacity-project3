@@ -12,7 +12,9 @@ def putItem(item):
     db_session.commit()
 
 def updateItem(item, changes):
-    db_session.query(Item).filter(Item.id == item.id, Item.category_id == item.category_id).update(changes, synchronize_session=False)
+    db_session.query(Item) \
+              .filter(Item.id == item.id, Item.category_id == item.category_id)\
+              .update(changes, synchronize_session=False)
     print '[db]>> Updating item: ' + str(item.id) + ' with changes: ' + str(changes)
     db_session.commit()
 

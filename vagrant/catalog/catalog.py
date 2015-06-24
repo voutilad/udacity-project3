@@ -10,7 +10,7 @@ app = Flask(__name__)
 @app.route('/catalog')
 def home():
     categories = db_session.query(Category).all()
-    items = db_session.query(Item).limit(20).all()
+    items = db_session.query(Item).order_by(Item.modified_date.desc()).limit(20).all()
 
     return render_template('catalog.j2', categories=categories, items=items)
 
@@ -69,7 +69,7 @@ def updateItem(item_id, category_id):
     if request.method == 'POST':
         name = request.form['name']
         description = request.form['description']
-        changes = {}
+        changes = {'modified_date': 'NOW()'}
         if name:
             changes.update({'name':name})
         if description:
