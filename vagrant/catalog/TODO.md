@@ -1,6 +1,7 @@
 # Primary Requirements
 
 * Finalize SEF url format / API
+* Basic CRUD
 * Latest items displayed on landing page - name/category
   * Add item count to each category
   * Add category membership to item listing

@@ -2,8 +2,8 @@ from models import Category, Item
 from database import db_session
 
 
-def getItem(item_id):
-    item = db_session.query(Item).filter(Item.id == item_id).one()
+def getItem(item_id, category_id):
+    item = db_session.query(Item).filter(Item.id == item_id, Item.category_id == category_id).one()
     return item
 
 def putItem(item):
@@ -11,13 +11,13 @@ def putItem(item):
     print '[db]>> Creating new item: ' + str(item)
     db_session.commit()
 
-def deleteItem(item_id):
-    item = getItem(item_id)
+def deleteItem(item_id, category_id):
+    item = getItem(item_id, category_id)
     if item is None:
-        print '[db]>> Cannot delete non-existant item with id: ' + str(item_id)
+        print '[db]>> Cannot delete non-existant item with id: ' + str(category_id) + '/' + str(item_id)
     else:
         db_session.delete(item)
-        db_session.flush()
+        db_session.commit()
         print '[db]>> Deleted item ' + str(item)
 
 def putCategory(category):

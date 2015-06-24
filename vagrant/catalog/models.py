@@ -19,7 +19,7 @@ class Item(Base):
     description = Column(String)
     created_date = Column(DateTime, server_default=text('NOW()'))
     modified_date = Column(DateTime, server_default=text('NOW()'))
-    category_id = Column(String, ForeignKey(Category.id))
+    category_id = Column(String, ForeignKey(Category.id), primary_key=True)
     category = relationship(Category)
 
     def __str__(self):

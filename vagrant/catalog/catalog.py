@@ -58,19 +58,22 @@ def newItem(category_id):
         return render_template('item-new.j2', category_name=category.name,
             category_id=category_id)
 
-@app.route('/catalog/item/<string:item_id>')
-def viewItem(item_id):
-    return render_template('item.j2', item=db.getItem(item_id))
+@app.route('/catalog/<string:category_id>/<string:item_id>')
+def viewItem(item_id, category_id):
+    return render_template('item.j2', item=db.getItem(item_id, category_id))
 
 @app.route('/catalog/item/<string:item_id>/edit')
 def editItem(item_id):
     return render_template('item-editor.j2',
         item=db.getItem(item_id), categories=db.getCategories())
 
-@app.route('/catalog/item/<string:item_id>/delete')
-def confirmItemDelete(item_id):
-    item = db.getItem(item_id)
-    return render_template('delete.j2', thing=item)
+@app.route('/catalog/<string:category_id>/<string:item_id>/delete', methods=['GET', 'POST'])
+def deleteItem(item_id, category_id):
+    if request.method == 'POST':
+        db.deleteItem(item_id, category_id)
+        return 'TODO: DELETED!'
+    else:
+        return 'TODO! Sup girl'
 
 @app.route('/catalog/item/new', methods=['POST'])
 def createItem():
@@ -85,14 +88,6 @@ def createItem():
     else:
         return 'ERROR!'
 
-@app.route('/catalog/item/delete', methods=['POST'])
-def deleteItem():
-    if request.json is not None:
-        data = request.json
-        db.deleteItem(data['item_id'])
-        return 'Nice!'
-    else:
-        return 'ERROR!'
 
 
 @app.teardown_appcontext
