@@ -86,10 +86,7 @@ def updateItem(item_id, category_id):
 def deleteItem(item_id, category_id):
     if request.method == 'POST':
         db.deleteItem(item_id, category_id)
-        if request.referrer:
-            return redirect(request.referrer)
-        else:
-            return redirect(url_for('showCategory', category_id=category_id))
+        return redirect(url_for('showCategory', category_id=category_id))
     else:
         return 'TODO! Sup girl. You want a delete confirmation or something?'
 
