@@ -6,11 +6,12 @@ class Category(Base):
     __tablename__ = 'category'
     id = Column(String, primary_key=True)
     name = Column(String)
+    description = Column(String)
     created_date = Column(DateTime, server_default=text('NOW()'))
     modified_date = Column(DateTime, server_default=text('NOW()'))
 
     def __str__(self):
-        return '<category name:' + self.name + ', id:' + self.id + '>'
+        return '<category name:' + self.name + ', id:' + self.id + ', description: ' + self.description + '>'
 
 class Item(Base):
     __tablename__ = 'item'

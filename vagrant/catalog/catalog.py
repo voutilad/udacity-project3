@@ -28,8 +28,9 @@ def showCategory(category_id):
 def newCategory():
     if request.method == 'POST':
         name = request.form['name']
+        description = request.form['description']
         category_id = utils.slugify(name)
-        db.putCategory(Category(name=name, id=category_id))
+        db.putCategory(Category(name=name, id=category_id, description=description))
         return redirect(url_for('showCategory', category_id=category_id))
     else:
         return render_template('category-new.j2')

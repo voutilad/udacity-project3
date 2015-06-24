@@ -9,6 +9,7 @@
 * Detail page on an Item
 * Delete confirmation page
 * Edit item page
+* sanitize HTML in user entered strings
 * OAuth login
 * JSON REST API
 
