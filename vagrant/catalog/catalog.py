@@ -22,7 +22,8 @@ def showCategory(category_id):
         return 'Unimplemented :-('
     else:
         return render_template('category.j2',
-            category=db.getCategory(category_id), items=db.getItems(category_id))
+                               category=db.getCategory(category_id),
+                               items=db.getItems(category_id))
 
 @app.route('/catalog/category/new', methods=['GET', 'POST'])
 def newCategory():
@@ -52,21 +53,34 @@ def newItem(category_id):
         item_description = request.form['description']
         item_id = utils.slugify(item_name)
         db.putItem(Item(name=item_name, description=item_description,
-            id=item_id, category_id=category_id))
+                   id=item_id, category_id=category_id))
         return redirect(url_for('showCategory', category_id=category_id))
     else:
         category = db.getCategory(category_id)
         return render_template('item-new.j2', category_name=category.name,
-            category_id=category_id)
+                               category_id=category_id)
 
 @app.route('/catalog/<string:category_id>/<string:item_id>')
 def viewItem(item_id, category_id):
     return render_template('item.j2', item=db.getItem(item_id, category_id))
 
-@app.route('/catalog/<string:category_id>/<string:item_id>/edit')
-def editItem(item_id, category_id):
-    return render_template('item-editor.j2',
-        item=db.getItem(item_id, category_id), categories=db.getCategories())
+@app.route('/catalog/<string:category_id>/<string:item_id>/update', methods=['GET', 'POST'])
+def updateItem(item_id, category_id):
+    if request.method == 'POST':
+        name = request.form['name']
+        description = request.form['description']
+        changes = {}
+        if name:
+            changes.update({'name':name})
+        if description:
+            changes.update({'description':description})
+
+        db.updateItem(Item(id=item_id, category_id=category_id), changes)
+        return redirect(url_for('viewItem', item_id=item_id, category_id=category_id))
+    else:
+        return render_template('item-editor.j2',
+                               item=db.getItem(item_id, category_id),
+                               categories=db.getCategories())
 
 @app.route('/catalog/<string:category_id>/<string:item_id>/delete', methods=['GET', 'POST'])
 def deleteItem(item_id, category_id):
@@ -84,8 +98,8 @@ def createItem():
     if request.json is not None:
         data = request.json
         item = Item(name=data['name'],
-            description=data['description'],
-            category_id=data['category_id'])
+                    description=data['description'],
+                    category_id=data['category_id'])
         db.putItem(item)
 
         return 'Nice!'
@@ -107,5 +121,5 @@ if __name__ == '__main__':
     config.read('config.cfg')
 
     app.debug = config.getboolean('server', 'debug')
-    app.run(host = config.get('server', 'host'),
-        port=config.getint('server', 'port'))
+    app.run(host=config.get('server', 'host'),
+            port=config.getint('server', 'port'))

@@ -12,7 +12,7 @@
               <h3 class="panel-title pull-left" style="padding-top: 7.5px;">{{item.name}}</h3>
               <div class="btn-group pull-right">
                 <form name="deleteItem" method="POST" action="{{url_for('deleteItem', category_id=item.category_id, item_id=item.id)}}">
-                  <a href="#" class="btn btn-default btn-small">Edit</a>
+                  <a href="{{url_for('updateItem', item_id=item.id, category_id=item.category_id)}}" class="btn btn-default btn-small">Edit</a>
                   <button type="submit" class="btn btn-default btn-small">Delete</button>
                 </form>
               </div>
