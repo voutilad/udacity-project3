@@ -3,8 +3,6 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 
-#TODO: Document these classes
-
 __DATABASE_NAME = 'catalog'
 __DATABAUSE_URI = 'postgresql://vagrant@/' + __DATABASE_NAME
 engine = create_engine(__DATABAUSE_URI)

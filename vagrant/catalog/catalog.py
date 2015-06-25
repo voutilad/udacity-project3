@@ -1,5 +1,5 @@
 import ConfigParser
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, jsonify
 from models import Category, Item
 from database import db_session
 import db, utils
@@ -18,12 +18,14 @@ def home():
 
 @app.route('/catalog/<string:category_id>')
 def showCategory(category_id):
-    if request.method == 'POST':
-        return 'Unimplemented :-('
+    category = db.getCategory(category_id)
+    items = db.getItems(category_id)
+
+    if utils.request_wants_json(request):
+        return jsonify(category=category.to_json(),
+                       items=[i.to_json() for i in items])
     else:
-        return render_template('category.j2',
-                               category=db.getCategory(category_id),
-                               items=db.getItems(category_id))
+        return render_template('category.j2', category=category,items=items)
 
 @app.route('/catalog/category/new', methods=['GET', 'POST'])
 def newCategory():
@@ -106,7 +108,7 @@ def createItem():
 
 
 @app.teardown_appcontext
-def shutdown_session(exception=None):
+def shutdown_session():
     db_session.remove()
 
 ############################################
