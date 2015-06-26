@@ -9,7 +9,7 @@
       {% else %}
         {% for category in categories %}
         <a class="list-group-item" href="{{url_for('showCategory', category_id=category.id)}}">
-          {{category.name}}
+          {{category.name}} ({{counts[category.id]}})
         </a>
         {% endfor %}
         <div class="row">
@@ -30,7 +30,7 @@
       {% else %}
         {% for item in items %}
         <a class="list-group-item" href="{{url_for('viewItem', item_id=item.id, category_id=item.category_id)}}">
-          {{item.name}}
+          {{item.name}} - <small>{{item.category_id}}</small>
         </a>
         {% endfor %}
       {% endif %}

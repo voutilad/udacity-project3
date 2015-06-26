@@ -10,9 +10,12 @@ app = Flask(__name__)
 @app.route('/catalog')
 def home():
     categories = db_session.query(Category).all()
+    counts = {}
+    for category in categories:
+        counts.update({category.id : db.getItemCount(category.id)})
     items = db_session.query(Item).order_by(Item.modified_date.desc()).limit(20).all()
 
-    return render_template('catalog.j2', categories=categories, items=items)
+    return render_template('catalog.j2', categories=categories, items=items, counts=counts)
 
 ### categories
 
@@ -38,9 +41,27 @@ def newCategory():
     else:
         return render_template('category-new.j2')
 
-@app.route('/catalog/category/<string:category_id>/delete')
+@app.route('/catalog/category/<string:category_id>/delete', methods=['GET', 'POST'])
 def deleteCategory(category_id):
-    return render_template('delete.j2', thing=db.getCategory(category_id))
+    category = db.getCategory(category_id)
+    items = db.getItems(category_id)
+
+    if request.method == 'GET':
+        if items:
+            print '[DEBUG]: category ' + category.id + ' has items. Need confirmation.'
+            return render_template('category-delete.j2', category=category, items=items)
+        else:
+            print '[DEBUG]: category ' + category.id + ' empty. Deleting.'
+            db.deleteCategory(category)
+            return redirect(url_for('home'))
+    else: #POST
+        if items:
+            db.deleteItems(items)
+        db.deleteCategory(category)
+        if utils.request_wants_json(request):
+            return 'OK' #TODO
+        else:
+            return redirect(url_for('home'))
 
 @app.route('/catalog/category/<string:category_id>/edit')
 def editCategory(category_id):
