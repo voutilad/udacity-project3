@@ -67,7 +67,7 @@ def getItems(category_id):
     return items
 
 def getItemCount(category_id):
-    return db_session.query(Category).filter(Category.id == category_id).join(Item.category).count()
+    return db_session.query(Item).filter(Item.category_id == category_id).count()
 
 def getCategories():
     categories = db_session.query(Category).all()
