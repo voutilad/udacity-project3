@@ -1,5 +1,7 @@
 import ConfigParser
 from flask import Flask, render_template, request, url_for, redirect, jsonify
+from flask import session as login_session
+import random, string
 from models import Category, Item
 from database import db_session
 import db, utils
@@ -16,6 +18,15 @@ def home():
     items = db_session.query(Item).order_by(Item.modified_date.desc()).limit(20).all()
 
     return render_template('catalog.j2', categories=categories, items=items, counts=counts)
+
+### session handling & login
+
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
+    login_session['state'] = state
+    return render_template('login.j2', client_id=app.client_id)
 
 ### categories
 
@@ -129,7 +140,7 @@ def createItem():
 
 
 @app.teardown_appcontext
-def shutdown_session():
+def shutdown_session(exception):
     db_session.remove()
 
 ############################################
@@ -140,6 +151,8 @@ if __name__ == '__main__':
         {'debug': True, 'host': '0.0.0.0', 'port': 5000})
     config.read('config.cfg')
 
+    app.secret_key = config.get('oauth', 'secret_key')
+    app.client_id = config.get('oauth', 'client_id')
     app.debug = config.getboolean('server', 'debug')
     app.run(host=config.get('server', 'host'),
             port=config.getint('server', 'port'))
