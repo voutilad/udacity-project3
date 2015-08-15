@@ -10,6 +10,9 @@ class Category(Base):
     created_date = Column(DateTime, server_default=text('NOW()'))
     modified_date = Column(DateTime, server_default=text('NOW()'))
 
+    def __init__(self):
+        pass
+
     def __str__(self):
         return '<category name:' + self.name + ', id:' + self.id + ', description: ' + self.description + '>'
 
@@ -26,6 +29,9 @@ class Item(Base):
     modified_date = Column(DateTime, server_default=text('NOW()'))
     category_id = Column(String, ForeignKey(Category.id), primary_key=True)
     category = relationship(Category)
+
+    def __init__(self):
+        pass
 
     def __str__(self):
         s = '<item ['
