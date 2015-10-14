@@ -10,15 +10,25 @@ class Category(Base):
     created_date = Column(DateTime, server_default=text('NOW()'))
     modified_date = Column(DateTime, server_default=text('NOW()'))
 
+    @classmethod
+    def from_web(cls, cat_id, name=None, description=None):
+        cat = Category()
+        cat.id = cat_id
+        cat.name = name
+        cat.description = description
+        return cat
+
     def __init__(self):
         pass
 
     def __str__(self):
-        return '<category name:' + self.name + ', id:' + self.id + ', description: ' + self.description + '>'
+        s = '<category name:' + self.name + ', id:' + self.id
+        s = s + ', description: ' + self.description + '>'
+        return s
 
     def to_json(self):
-        return { 'id':self.id, 'name':self.name, 'description':self.description,
-                 'created_date':self.created_date, 'modified_date':self.modified_date }
+        return {'id':self.id, 'name':self.name, 'description':self.description,
+                'created_date':self.created_date, 'modified_date':self.modified_date}
 
 class Item(Base):
     __tablename__ = 'item'
@@ -33,6 +43,15 @@ class Item(Base):
     def __init__(self):
         pass
 
+    @classmethod
+    def from_web(cls, item_id, category_id, name=None, description=None):
+        item = Item()
+        item.id = item_id
+        item.category_id = category_id
+        item.name = name
+        item.description = description
+        return item
+
     def __str__(self):
         s = '<item ['
         s += 'name: ' + self.name + ', '
@@ -42,8 +61,8 @@ class Item(Base):
         return s
 
     def to_json(self):
-        return { 'id':self.id, 'name':self.name,
-                 'description':self.description,
-                 'created_date':self.created_date,
-                 'modified_date':self.modified_date,
-                 'category_id':self.category_id }
+        return {'id':self.id, 'name':self.name,
+                'description':self.description,
+                'created_date':self.created_date,
+                'modified_date':self.modified_date,
+                'category_id':self.category_id}

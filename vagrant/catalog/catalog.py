@@ -131,7 +131,7 @@ def newCategory():
         name = request.form['name']
         description = request.form['description']
         category_id = utils.slugify(name)
-        db.putCategory(Category(name=name, id=category_id, description=description))
+        db.putCategory(Category.from_web(id=category_id, name=name, description=description))
         return redirect(url_for('showCategory',
                                 category_id=category_id,
                                 login_session=login_session))
@@ -172,11 +172,12 @@ def editCategory(category_id):
 @app.route('/catalog/<string:category_id>/newitem', methods=['GET', 'POST'])
 def newItem(category_id):
     if request.method == 'POST':
-        item_name = request.form['name']
-        item_description = request.form['description']
-        item_id = utils.slugify(item_name)
-        db.putItem(Item(name=item_name, description=item_description,
-                   id=item_id, category_id=category_id))
+        name = request.form['name']
+        description = request.form['description']
+        item_id = utils.slugify(name)
+        item = Item.from_web(item_id=item_id, category_id=category_id,
+                            name=name, description=description)
+        db.putItem(item)
         return redirect(url_for('showCategory',
                                 category_id=category_id,
                                 login_session=login_session))
@@ -202,8 +203,8 @@ def updateItem(item_id, category_id):
             changes.update({'name':name})
         if description:
             changes.update({'description':description})
-
-        db.updateItem(Item(id=item_id, category_id=category_id), changes)
+        item = Item.from_web(item_id=item_id, category_id=category_id)
+        db.updateItem(item, changes)
         return redirect(url_for('viewItem', item_id=item_id,
                                 category_id=category_id,
                                 login_session=login_session))
