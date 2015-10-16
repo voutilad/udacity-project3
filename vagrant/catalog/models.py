@@ -1,3 +1,6 @@
+'''
+Data model for Catalog application leveraging sqlalchemy conventions
+'''
 from sqlalchemy import Column, ForeignKey, String, DateTime, text
 from sqlalchemy.orm import relationship
 from database import Base
@@ -53,12 +56,13 @@ class Item(Base):
         return item
 
     def __str__(self):
-        s = '<item ['
-        s += 'name: ' + self.name + ', '
-        s += 'id: ' + self.id + ', '
-        s += 'description: ' + self.description + ', '
-        s += 'category_id: ' + str(self.category_id) + ' ]>'
-        return s
+        pattern = '<item [name: {name}, id: {id}, '
+        pattern = pattern + 'description: {description}, category_id: {category_id}]>'
+        return pattern.format(name=self.name,
+                              id=self.id,
+                              description=self.description,
+                              category_id=str(self.category_id))
+
 
     def to_json(self):
         return {'id':self.id, 'name':self.name,
@@ -66,3 +70,16 @@ class Item(Base):
                 'created_date':self.created_date,
                 'modified_date':self.modified_date,
                 'category_id':self.category_id}
+
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(String, primary_key=True)
+    name = Column(String)
+    email = Column(String)
+    picture = Column(String)
+
+    def __init__(self, user_id=None, name=None, email=None, picture=None):
+        self.id = user_id
+        self.name = name
+        self.email = email
+        self.picture = picture
