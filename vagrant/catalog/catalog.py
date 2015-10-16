@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, url_for, redirect, jsonify
 import random, string
 from models import Category, Item
 from database import db_session
+from security import SecurityCheck
 import db, utils
 
 ### security stuff
@@ -157,6 +158,7 @@ def showCategory(category_id):
                                login_session=login_session)
 
 @app.route('/catalog/category/new', methods=['GET', 'POST'])
+@SecurityCheck(session=login_session)
 def newCategory():
     if request.method == 'POST':
         name = request.form['name']
