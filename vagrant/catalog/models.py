@@ -13,16 +13,10 @@ class Category(Base):
     created_date = Column(DateTime, server_default=text('NOW()'))
     modified_date = Column(DateTime, server_default=text('NOW()'))
 
-    @classmethod
-    def from_web(cls, cat_id, name=None, description=None):
-        cat = Category()
-        cat.id = cat_id
-        cat.name = name
-        cat.description = description
-        return cat
-
-    def __init__(self):
-        pass
+    def __init__(self, id=None, name=None, description=None):
+        self.id = id
+        self.name = name
+        self.description = description
 
     def __str__(self):
         s = '<category name:' + self.name + ', id:' + self.id
@@ -43,17 +37,11 @@ class Item(Base):
     category_id = Column(String, ForeignKey(Category.id), primary_key=True)
     category = relationship(Category)
 
-    def __init__(self):
-        pass
-
-    @classmethod
-    def from_web(cls, item_id, category_id, name=None, description=None):
-        item = Item()
-        item.id = item_id
-        item.category_id = category_id
-        item.name = name
-        item.description = description
-        return item
+    def __init__(self, id=None, name=None, description=None, category_id=None):
+        self.id = id
+        self.name = name
+        self.description = description
+        self.category_id = category_id
 
     def __str__(self):
         pattern = '<item [name: {name}, id: {id}, '

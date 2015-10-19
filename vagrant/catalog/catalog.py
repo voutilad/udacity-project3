@@ -164,7 +164,7 @@ def newCategory():
         name = request.form['name']
         description = request.form['description']
         category_id = utils.slugify(name)
-        db.putCategory(Category.from_web(id=category_id, name=name, description=description))
+        db.putCategory(Category(id=category_id, name=name, description=description))
         return redirect(url_for('showCategory',
                                 category_id=category_id,
                                 login_session=login_session))
@@ -208,8 +208,8 @@ def newItem(category_id):
         name = request.form['name']
         description = request.form['description']
         item_id = utils.slugify(name)
-        item = Item.from_web(item_id=item_id, category_id=category_id,
-                            name=name, description=description)
+        item = Item(id=item_id, category_id=category_id,
+                    name=name, description=description)
         db.putItem(item)
         return redirect(url_for('showCategory',
                                 category_id=category_id,
@@ -236,7 +236,7 @@ def updateItem(item_id, category_id):
             changes.update({'name':name})
         if description:
             changes.update({'description':description})
-        item = Item.from_web(item_id=item_id, category_id=category_id)
+        item = Item(id=item_id, category_id=category_id)
         db.updateItem(item, changes)
         return redirect(url_for('viewItem', item_id=item_id,
                                 category_id=category_id,
