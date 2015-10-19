@@ -158,7 +158,7 @@ def showCategory(category_id):
                                login_session=login_session)
 
 @app.route('/catalog/category/new', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session)
+@SecurityCheck(session=login_session, login_route='showLogin')
 def newCategory():
     if request.method == 'POST':
         name = request.form['name']
@@ -172,6 +172,7 @@ def newCategory():
         return render_template('category-new.j2', login_session=login_session)
 
 @app.route('/catalog/category/<string:category_id>/delete', methods=['GET', 'POST'])
+@SecurityCheck(session=login_session, login_route='showLogin')
 def deleteCategory(category_id):
     category = db.getCategory(category_id)
     items = db.getItems(category_id)
@@ -203,6 +204,7 @@ def editCategory(category_id):
 ### items
 
 @app.route('/catalog/<string:category_id>/newitem', methods=['GET', 'POST'])
+@SecurityCheck(session=login_session, login_route='showLogin')
 def newItem(category_id):
     if request.method == 'POST':
         name = request.form['name']
@@ -227,6 +229,7 @@ def viewItem(item_id, category_id):
                            login_session=login_session)
 
 @app.route('/catalog/<string:category_id>/<string:item_id>/update', methods=['GET', 'POST'])
+@SecurityCheck(session=login_session, login_route='showLogin')
 def updateItem(item_id, category_id):
     if request.method == 'POST':
         name = request.form['name']
@@ -248,6 +251,7 @@ def updateItem(item_id, category_id):
                                login_session=login_session)
 
 @app.route('/catalog/<string:category_id>/<string:item_id>/delete', methods=['GET', 'POST'])
+@SecurityCheck(session=login_session, login_route='showLogin')
 def deleteItem(item_id, category_id):
     if request.method == 'POST':
         db.deleteItem(item_id, category_id)
@@ -257,6 +261,7 @@ def deleteItem(item_id, category_id):
         return 'TODO! Sup girl. You want a delete confirmation or something?'
 
 @app.route('/catalog/item/new', methods=['POST'])
+@SecurityCheck(session=login_session, login_route='showLogin')
 def createItem():
     if request.json is not None:
         data = request.json
