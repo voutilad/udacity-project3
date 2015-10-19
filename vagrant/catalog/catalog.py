@@ -111,6 +111,14 @@ def gconnect():
     print "done!"
     return output
 
+@app.route('/logout')
+def showLogout():
+    if login_session is None or not login_session.has_key('credentials'):
+        #user not logged in
+        return redirect(url_for('home'))
+
+    return render_template('logout.j2')
+
 @app.route('/gdisconnect')
 def gdisconnect():
     if login_session is None or not login_session.has_key('credentials'):
@@ -119,6 +127,7 @@ def gdisconnect():
         return response
 
     credentials = login_session['credentials']
+    username = login_session['username']
 
     #access_token = credentials.access_token
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % credentials
@@ -132,13 +141,11 @@ def gdisconnect():
         del login_session['email']
         del login_session['picture']
 
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        flash('Succesfully logged out ' + username)
+        return redirect(url_for('home'))
     else:
-        response = make_response(json.dumps('Failed to revoke token for given user.'), 400)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        flash('Failed to logout and disconnect session.')
+        return redirect(url_for('home'))
 
 
 ### categories
