@@ -17,18 +17,24 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="/">Item Catalog</a>
+          <a class="navbar-brand" href="/">The Catalog App</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
+          <ul class="nav navbar-nav" style="float:right;">
           {% if login_session['username'] %}
-            <li>
-              <a href="{{url_for('gdisconnect')}}">
-                <img src="{{login_session['picture']}}" width="50px" height="50px" alt="Logout"></img>
-              </a>
-            </li>
+            <a href="{{url_for('gdisconnect')}}">
+              <svg class="avatar">
+                  <defs>
+                    <clipPath id="circleClip">
+                      <circle cx="25" cy="25" r="25"/>
+                    </clipPath>
+                  </defs>
+                  <image xlink:href="{{login_session['picture']}}" x="0" y="0"
+                   height="50" width="50" clip-path="url(#circleClip)"/>
+              </svg>
+            </a>
           {% else %}
-            <li><a href="{{url_for('show_login')}}">Login</a></li>
+            <a href="{{url_for('show_login')}}">Login</a>
           {% endif %}
           </ul>
         </div>
