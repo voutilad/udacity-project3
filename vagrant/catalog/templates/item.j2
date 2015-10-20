@@ -1,20 +1,18 @@
 {% extends "base.j2" %}
 {% block main %}
-<div class="row">
-  <div class="col-md-4"></div>
-  <div class="col-md-4">
+<form name="deleteItem" method="POST"
+ action="{{url_for('delete_item', item_id=item.item_id, category_id=item.category_id)}}">
+  <div class="row center-block text-center">
     <h3>{{ item.name }}</h3>
     <p>{{ item.description }}</p>
-    <div class="row">
-      <form name="deleteItem" method="POST"
-       action="{{url_for('delete_item', item_id=item.item_id, category_id=item.category_id)}}">
-        <a href="{{url_for('update_item', item_id=item.item_id, category_id=item.category_id)}}">
-          <button type="button" class="btn btn-default">Edit</button>
-        </a>
-        <button type="submit" class="btn btn-default">Delete</button>
-      </form>
+    <div class="row center-block text-center">
+      <button type="submit" class="btn btn-default">Delete</button>
+      <a class="btn btn-primary"
+       href="{{url_for('update_item', item_id=item.item_id, category_id=item.category_id)}}">
+        Edit
+      </a>
+    </form>
     </div>
   </div>
-  <div class="col-md-4"</div>
-</div>
+</form>
 {% endblock %}

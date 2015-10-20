@@ -12,12 +12,10 @@
           {{category.name}} ({{counts[category.category_id]}})
         </a>
         {% endfor %}
-        <div class="row">
-          <div class="col-md-5"></div>
-          <div class="col-md-2">
-            <a class="btn btn-default" href="{{url_for('new_category')}}">New Category</a>
-          </div>
-          <div class="col-md-5"></div>
+        <div class="row" style="padding-top: 5px;">
+          <div class="col-md-4"></div>
+          <a class="col-md-4 btn btn-default center-block" href="{{url_for('new_category')}}">New Category</a>
+          <div class="col-md-4"></div>
         </div>
       {% endif %}
       </div>

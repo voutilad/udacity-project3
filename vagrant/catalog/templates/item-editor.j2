@@ -1,48 +1,48 @@
 {% extends "base.j2" %}
 {% block main %}
-  <div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-4">
-      <form name="updateItem" method="POST"
-       action="{{url_for('update_item', item_id=item.item_id, category_id=item.category_id)}}">
-        <fieldset>
-          <div class="form-group">
-            <div class="input-group">
-              <h3><input type="text" name="name" class="form-control"
-                   placeholder="{{item.name}}" aria-describedby="Item Name"></h3>
-            </div>
-            <div class="input-group">
-              <input type="text" name="description" class="form-control"
-               placeholder="{{item.description}}" aria-describedby="Item Description">
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="dropdown">
-              <button class="btn btn-default dropdown-toggle" type="button"
-               id="categoryMenu" data-toggle="dropdown" aria-expanded="true">
-                Category
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu" aria-labelledby="category dropdown">
-                {% for category in categories %}
-                <li role="presentation">
-                  <a role="menuitem" tabindex="-1" href="#">{{category.name}}</a>
-                </li>
-                {% endfor %}
-              </ul>
-            </div>
-          </div>
-        </fieldset>
-        <div class="row">
-          <a href="{{url_for('view_item', item_id=item.item_id, category_id=item.category_id)}}">
-            <button type="button" class="btn btn-default">Cancel</button>
-          </a>
-          <a href="#">
-            <button type="submit" class="btn btn-default">Save</button>
-          </a>
-        </div>
-      </form>
-    </div>
-    <div class="col-md-4"></div>
+<form name="updateItem" method="POST"
+ action="{{url_for('update_item', item_id=item.item_id, category_id=item.category_id)}}">
+  <div class="row center-block text-center">
+    <h3>Update {{ item.name }}</h3>
   </div>
+  <fieldset>
+    <div class="row center-block text-center">
+      <div class="form-group">
+        <div class="input-group center-block" style="width: 45%">
+          <input type="text" name="name" class="form-control"
+               placeholder="{{item.name}}" aria-describedby="Item Name">
+        </div>
+        <div class="input-group center-block" style="width: 45%">
+          <input type="text" name="description" class="form-control"
+           placeholder="{{item.description}}" aria-describedby="Item Description">
+        </div>
+      </div>
+    </div>
+    <!-- Dropdown thingy -->
+    <div class="dropdown row center-block text-center">
+      <button class="btn btn-default dropdown-toggle" type="button"
+       id="categoryMenu" data-toggle="dropdown" aria-expanded="true"
+       style="width: 20%; margin-top: 10px;">
+        Category
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu" aria-labelledby="category dropdown" style="transform: translate(-50%, 0); text-align: center; left: 50%;">
+        {% for category in categories %}
+        <li role="presentation">
+          <a role="menuitem" tabindex="-1" href="#">{{category.name}}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <!-- End Dropdown thingy -->
+  </fieldset>
+  <div class="row center-block text-center" style="padding-top: 10px;">
+    <a class="btn btn-default" href="{{url_for('view_item', item_id=item.item_id, category_id=item.category_id)}}">
+      Cancel
+    </a>
+    <button type="submit" class="btn btn-primary">
+      Save
+    </button>
+  </div>
+</form>
 {% endblock %}

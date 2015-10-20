@@ -16,11 +16,11 @@
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/">The Catalog App</a>
-        </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav" style="float:right;">
+          <div class="nav navbar-nav pull-left">
+            <a class="navbar-brand" href="/">The Catalog App</a>
+          </div>
+          <div class="nav navbar-nav pull-right">
           {% if login_session['username'] %}
             <a href="{{url_for('gdisconnect')}}">
               <svg class="avatar">
@@ -36,7 +36,7 @@
           {% else %}
             <a href="{{url_for('show_login')}}">Login</a>
           {% endif %}
-          </ul>
+          </div>
         </div>
       </div>
     </nav>
@@ -57,7 +57,7 @@
       </div>
     </div>
     <footer>
-      <div class="container-fluid">
+      <div class="container-fluid center-block text-center">
       {% block footer %}
         <p class="text-muted">&copy; 2015 - Dave Voutila</p>
       {% endblock %}

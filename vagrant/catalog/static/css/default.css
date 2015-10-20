@@ -8,6 +8,10 @@ body {
   margin-bottom: 60px;
 }
 
+footer {
+  padding-top: 10px;
+}
+
 .main {
 
 }
@@ -42,4 +46,9 @@ body {
   margin-top: 5px;
   width: 50px;
   height: 50px;
+}
+
+/* Override some Bootstrap.css stuff */
+.btn {
+  white-space: normal;
 }
