@@ -19,6 +19,7 @@ class SecurityCheck(object):
 
         @wraps(function)
         def decorated_function(*args, **kwargs):
+            ''' Decorator wrapper function '''
             if self.session is not None and self.session.has_key('credentials'):
                 return function(*args, **kwargs)
             else:

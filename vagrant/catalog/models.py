@@ -3,71 +3,96 @@ Data model for Catalog application leveraging sqlalchemy conventions
 '''
 from sqlalchemy import Column, ForeignKey, String, DateTime, text
 from sqlalchemy.orm import relationship
-from database import Base
+from datetime import datetime
+from database import BASE
 
-class Category(Base):
+class Category(BASE):
+    ''' Category for organizing one or many Items '''
     __tablename__ = 'category'
-    id = Column(String, primary_key=True)
+    category_id = Column(String, primary_key=True)
     name = Column(String)
     description = Column(String)
     created_date = Column(DateTime, server_default=text('NOW()'))
     modified_date = Column(DateTime, server_default=text('NOW()'))
 
-    def __init__(self, id=None, name=None, description=None):
-        self.id = id
+    def __init__(self, category_id=None, name=None, description=None):
+        self.category_id = category_id
         self.name = name
         self.description = description
+        self.created_date = datetime.now()
+        self.modified_date = datetime.now()
 
     def __str__(self):
-        s = '<category name:' + self.name + ', id:' + self.id
-        s = s + ', description: ' + self.description + '>'
-        return s
+        string = '<category name:' + self.name
+        string += ', category_id:' + self.category_id
+        string += ', description: ' + self.description + '>'
+        return string
 
     def to_json(self):
-        return {'id':self.id, 'name':self.name, 'description':self.description,
-                'created_date':self.created_date, 'modified_date':self.modified_date}
+        ''' Return JSON for Category '''
+        return {'category_id':self.category_id,
+                'name':self.name,
+                'description':self.description,
+                'created_date':self.created_date,
+                'modified_date':self.modified_date}
 
-class Item(Base):
+    def update_modified_date(self):
+        ''' Update the modified date setting it to current time on server. '''
+        self.modified_date = datetime.now()
+
+class Item(BASE):
+    ''' Base unit of thing contained inside a Category. '''
     __tablename__ = 'item'
-    id = Column(String, primary_key=True)
+    item_id = Column(String, primary_key=True)
     name = Column(String)
     description = Column(String)
     created_date = Column(DateTime, server_default=text('NOW()'))
     modified_date = Column(DateTime, server_default=text('NOW()'))
-    category_id = Column(String, ForeignKey(Category.id), primary_key=True)
+    category_id = Column(String, ForeignKey(Category.category_id), primary_key=True)
     category = relationship(Category)
 
-    def __init__(self, id=None, name=None, description=None, category_id=None):
-        self.id = id
+    def __init__(self, item_id=None, name=None, description=None, category_id=None):
+        self.item_id = item_id
         self.name = name
         self.description = description
         self.category_id = category_id
+        self.created_date = datetime.now()
+        self.modified_date = datetime.now()
 
     def __str__(self):
-        pattern = '<item [name: {name}, id: {id}, '
+        pattern = '<item [name: {name}, item_id: {item_id}, '
         pattern = pattern + 'description: {description}, category_id: {category_id}]>'
         return pattern.format(name=self.name,
-                              id=self.id,
+                              item_id=self.item_id,
                               description=self.description,
                               category_id=str(self.category_id))
 
 
     def to_json(self):
-        return {'id':self.id, 'name':self.name,
+        ''' Serialize Item to JSON '''
+        return {'item_id':self.item_id, 'name':self.name,
                 'description':self.description,
                 'created_date':self.created_date,
                 'modified_date':self.modified_date,
                 'category_id':self.category_id}
 
-class User(Base):
+    def update_modified_date(self):
+        ''' Update modified date of Item, setting to current server time. '''
+        self.modified_date = datetime.now()
+
+class User(BASE):
+    ''' User account associated with supported cloud auth services '''
     __tablename__ = 'user'
-    id = Column(String, primary_key=True)
+    user_id = Column(String, primary_key=True)
     name = Column(String)
     email = Column(String)
     picture = Column(String)
+    service = Column(String)
 
-    def __init__(self, user_id=None, name=None, email=None, picture=None):
-        self.id = user_id
+    def __init__(self, user_id=None, name=None, email=None,
+                 picture=None, service=None):
+        self.user_id = user_id
         self.name = name
         self.email = email
         self.picture = picture
+        self.service = service

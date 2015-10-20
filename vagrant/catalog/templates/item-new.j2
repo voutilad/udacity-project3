@@ -4,7 +4,8 @@
     <div class="col-md-4"></div>
     <div class="col-md-4">
       <h3>New Item in {{ category_name }}</h3>
-      <form id="createCategory" method="POST" action="{{url_for('newItem', category_id=category_id)}}">
+      <form id="createCategory" method="POST"
+       action="{{url_for('new_item', category_id=category_id)}}">
         <fieldset>
           <div class="form-group">
             <div class="input-group">
@@ -16,7 +17,7 @@
           </div>
         </fieldset>
         <div class="row">
-          <a href="{{url_for('showCategory', category_id=category_id)}}">
+          <a href="{{url_for('show_category', category_id=category_id)}}">
             <button type="button" class="btn btn-default">Cancel</button>
           </a>
           <a href="#">

@@ -1,74 +1,89 @@
+''' Database methods for CRUD '''
 from models import Category, Item
-from database import db_session
+from database import DB_SESSION
 from sqlalchemy.exc import IntegrityError
 
 
-def getItem(item_id, category_id):
-    item = db_session.query(Item).filter(Item.id == item_id, Item.category_id == category_id).one()
+def get_item(item_id, category_id):
+    ''' Retrieve an item by item_id and category_id from the database. '''
+    item = DB_SESSION.query(Item).filter(Item.item_id == item_id, Item.category_id == category_id).one()
     return item
 
-def putItem(item):
+def put_item(item):
+    ''' Put an item into the database, overwriting any existing with same id. '''
     try:
-        db_session.add(item)
+        DB_SESSION.add(item)
         print '[db]>> Creating new item: ' + str(item)
-        db_session.commit()
+        DB_SESSION.commit()
         return True
-    except IntegrityError as e:
-        print '[db]>> ERROR: ' + str(e)
-        db_session.rollback()
+    except IntegrityError as error:
+        print '[db]>> ERROR: ' + str(error)
+        DB_SESSION.rollback()
         return False
 
-def updateItem(item, changes):
-    db_session.query(Item) \
-              .filter(Item.id == item.id, Item.category_id == item.category_id)\
+def update_item(item, changes):
+    ''' Update an item in the database with given changes. '''
+    DB_SESSION.query(Item) \
+              .filter(Item.item_id == item.item_id, Item.category_id == item.category_id)\
               .update(changes, synchronize_session=False)
-    print '[db]>> Updating item: ' + str(item.id) + ' with changes: ' + str(changes)
-    db_session.commit()
+    print '[db]>> Updating item: ' + str(item.item_id) + ' with changes: ' + str(changes)
+    DB_SESSION.commit()
 
-def deleteItem(item_id, category_id):
-    item = getItem(item_id, category_id)
+def delete_item(item_id, category_id):
+    ''' Deletey an item from the database by item_id and category_id '''
+    item = get_item(item_id, category_id)
     if item is None:
-        print '[db]>> Cannot delete non-existant item with id: ' + str(category_id) + '/' + str(item_id)
+        msg = '[db]>> Cannot delete non-existant item with id: '
+        msg += str(category_id) + '/' + str(item_id)
+        print msg
         return False
     else:
-        db_session.delete(item)
-        db_session.commit()
+        DB_SESSION.delete(item)
+        DB_SESSION.commit()
         print '[db]>> Deleted item ' + str(item)
         return True
 
-def deleteItems(items):
+def delete_items(items):
+    ''' Delete all given items in array, calling delete_item() on each.'''
     for item in items:
-        db_session.delete(item)
+        DB_SESSION.delete(item)
         print '[db]>> Deleting item ' + str(item)
-    db_session.commit()
+    DB_SESSION.commit()
 
-def putCategory(category):
+def put_category(category):
+    ''' Add a new Category to the database. '''
     try:
-        db_session.add(category)
+        DB_SESSION.add(category)
         print '[db]>> Creating category: ' + str(category)
-        db_session.commit()
+        DB_SESSION.commit()
         return True
-    except IntegrityError as e:
-        print '[db]>> Error creating category: ' + str(e)
-        db_session.rollback()
+    except IntegrityError as error:
+        print '[db]>> Error creating category: ' + str(error)
+        DB_SESSION.rollback()
         return False
 
-def deleteCategory(category):
-    db_session.delete(category)
-    db_session.commit()
+def delete_category(category):
+    ''' Delete a given Category from the database. '''
+    DB_SESSION.delete(category)
+    DB_SESSION.commit()
     print '[db]>> Deleted category ' + str(category)
 
-def getCategory(category_id):
-    category = db_session.query(Category).filter(Category.id == category_id).one()
+def get_category(category_id):
+    ''' Retrieve a given Category by id from the database. '''
+    category = DB_SESSION.query(Category).filter(Category.category_id == category_id).one()
     return category
 
-def getItems(category_id):
-    items = db_session.query(Item).filter(Item.category_id == category_id).all()
+def get_items(category_id):
+    ''' Get all Items from the database associated/contained in a given
+        Category by category_id. '''
+    items = DB_SESSION.query(Item).filter(Item.category_id == category_id).all()
     return items
 
-def getItemCount(category_id):
-    return db_session.query(Item).filter(Item.category_id == category_id).count()
+def get_item_count(category_id):
+    ''' Get the number of Items assigned to a given category_id '''
+    return DB_SESSION.query(Item).filter(Item.category_id == category_id).count()
 
-def getCategories():
-    categories = db_session.query(Category).all()
+def get_categories():
+    ''' Get all Categories from the database '''
+    categories = DB_SESSION.query(Category).all()
     return categories

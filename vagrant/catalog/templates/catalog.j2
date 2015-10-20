@@ -5,17 +5,17 @@
       <h3>Categories</h3>
       <div class="list-group">
       {% if not categories %}
-        You have no categories! Why not <a href="{{url_for('newCategory')}}">create</a> one?
+        You have no categories! Why not <a href="{{url_for('new_category')}}">create</a> one?
       {% else %}
         {% for category in categories %}
-        <a class="list-group-item" href="{{url_for('showCategory', category_id=category.id)}}">
-          {{category.name}} ({{counts[category.id]}})
+        <a class="list-group-item" href="{{url_for('show_category', category_id=category.category_id)}}">
+          {{category.name}} ({{counts[category.category_id]}})
         </a>
         {% endfor %}
         <div class="row">
           <div class="col-md-5"></div>
           <div class="col-md-2">
-            <a class="btn btn-default" href="{{url_for('newCategory')}}">New Category</a>
+            <a class="btn btn-default" href="{{url_for('new_category')}}">New Category</a>
           </div>
           <div class="col-md-5"></div>
         </div>
@@ -29,7 +29,8 @@
         You have no recent items! Maybe trying viewing some?
       {% else %}
         {% for item in items %}
-        <a class="list-group-item" href="{{url_for('viewItem', item_id=item.id, category_id=item.category_id)}}">
+        <a class="list-group-item"
+         href="{{url_for('view_item', item_id=item.item_id, category_id=item.category_id)}}">
           {{item.name}} - <small>{{item.category_id}}</small>
         </a>
         {% endfor %}

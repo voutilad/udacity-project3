@@ -1,8 +1,12 @@
+'''
+Udacity Fullstack Nanodegree Project 3 - Item Catalog
+Author: Dave Voutila
+'''
 import ConfigParser
-from flask import Flask, render_template, request, url_for, redirect, jsonify
+from flask import Flask, render_template, request, url_for, redirect, jsonify, flash
 import random, string
 from models import Category, Item
-from database import db_session
+from database import DB_SESSION
 from security import SecurityCheck
 import db, utils
 
@@ -11,17 +15,17 @@ from flask import session as login_session, make_response
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 import httplib2, json, requests
 
-app = Flask(__name__)
+APP = Flask(__name__)
 
 
-@app.route('/')
-@app.route('/catalog')
+@APP.route('/')
+@APP.route('/catalog')
 def home():
-    categories = db_session.query(Category).all()
+    categories = DB_SESSION.query(Category).all()
     counts = {}
     for category in categories:
-        counts.update({category.id : db.getItemCount(category.id)})
-    items = db_session.query(Item).order_by(Item.modified_date.desc()).limit(20).all()
+        counts.update({category.category_id : db.get_item_count(category.category_id)})
+    items = DB_SESSION.query(Item).order_by(Item.modified_date.desc()).limit(20).all()
 
     return render_template('catalog.j2', categories=categories,
                            items=items, counts=counts,
@@ -29,16 +33,16 @@ def home():
 
 ### session handling & login
 
-@app.route('/login')
-def showLogin():
+@APP.route('/login')
+def show_login():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
     return render_template('login.j2',
-                           client_id=app.client_id, state=state,
+                           client_id=APP.client_id, state=state,
                            login_session=login_session)
 
-@app.route('/gconnect', methods=['POST'])
+@APP.route('/gconnect', methods=['POST'])
 def gconnect():
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state!'), 401)
@@ -59,8 +63,8 @@ def gconnect():
     access_token = credentials.access_token
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
            % access_token)
-    h = httplib2.Http()
-    result = json.loads(h.request(url, 'GET')[1])
+    http = httplib2.Http()
+    result = json.loads(http.request(url, 'GET')[1])
 
     if result.get('error') is not None:
         response = make_response(json.dumps(result.get('error'), 501))
@@ -73,7 +77,7 @@ def gconnect():
         response = make_response(json.dumps(msg), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    if result['issued_to'] != app.client_id:
+    if result['issued_to'] != APP.client_id:
         msg = "Token's client ID doesn't match applications"
         response = make_response(json.dumps(msg), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -106,20 +110,20 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    print("you are now logged in as %s" % login_session['username'])
-    print "done!"
+    output += ' " style = "width: 300px; height: 300px;border-radius: '
+    output += '150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    print 'User logged in as %s' % login_session['username']
     return output
 
-@app.route('/logout')
-def showLogout():
+@APP.route('/logout')
+def show_logout():
     if login_session is None or not login_session.has_key('credentials'):
         #user not logged in
         return redirect(url_for('home'))
 
     return render_template('logout.j2')
 
-@app.route('/gdisconnect')
+@APP.route('/gdisconnect')
 def gdisconnect():
     if login_session is None or not login_session.has_key('credentials'):
         response = make_response(json.dumps('User not connected.'), 401)
@@ -131,8 +135,8 @@ def gdisconnect():
 
     #access_token = credentials.access_token
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % credentials
-    h = httplib2.Http()
-    result = h.request(url, 'GET')[0]
+    http = httplib2.Http()
+    result = http.request(url, 'GET')[0]
 
     if result['status'] == '200':
         del login_session['credentials']
@@ -150,10 +154,14 @@ def gdisconnect():
 
 ### categories
 
-@app.route('/catalog/<string:category_id>')
-def showCategory(category_id):
-    category = db.getCategory(category_id)
-    items = db.getItems(category_id)
+@APP.route('/catalog/<string:category_id>')
+def show_category(category_id):
+    ''' Overloaded method:
+            * accepts: json - returns JSON object response
+            * accepts: html - returns view for Category display
+    '''
+    category = db.get_category(category_id)
+    items = db.get_items(category_id)
 
     if utils.request_wants_json(request):
         return jsonify(category=category.to_json(),
@@ -164,80 +172,94 @@ def showCategory(category_id):
                                items=items,
                                login_session=login_session)
 
-@app.route('/catalog/category/new', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='showLogin')
-def newCategory():
+@APP.route('/catalog/category/new', methods=['GET', 'POST'])
+@SecurityCheck(session=login_session, login_route='show_login')
+def new_category():
+    ''' Overloaded method:
+            * GET - Constructs view for creating a new Category
+            * POST - REST API call for creating a new Category
+    '''
     if request.method == 'POST':
         name = request.form['name']
         description = request.form['description']
         category_id = utils.slugify(name)
-        db.putCategory(Category(id=category_id, name=name, description=description))
-        return redirect(url_for('showCategory',
+        db.put_category(Category(category_id=category_id,
+                                 name=name,
+                                 description=description))
+        return redirect(url_for('show_category',
                                 category_id=category_id,
                                 login_session=login_session))
     else:
         return render_template('category-new.j2', login_session=login_session)
 
-@app.route('/catalog/category/<string:category_id>/delete', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='showLogin')
-def deleteCategory(category_id):
-    category = db.getCategory(category_id)
-    items = db.getItems(category_id)
+@APP.route('/catalog/category/<string:category_id>/delete', methods=['GET', 'POST'])
+@SecurityCheck(session=login_session, login_route='show_login')
+def delete_category(category_id):
+    ''' Overloaded method:
+            * GET - Constructs view for deleting a Category
+            * POST - REST API call for deleting a Category
+    '''
+    category = db.get_category(category_id)
+    items = db.get_items(category_id)
 
     if request.method == 'GET':
         if items:
-            print '[DEBUG]: category ' + category.id + ' has items. Need confirmation.'
+            print '[DEBUG]: category ' + category.category_id + ' has items. Need confirmation.'
             return render_template('category-delete.j2',
                                    category=category,
                                    items=items,
                                    login_session=login_session)
         else:
-            print '[DEBUG]: category ' + category.id + ' empty. Deleting.'
-            db.deleteCategory(category)
+            print '[DEBUG]: category ' + category.category_id + ' empty. Deleting.'
+            db.delete_category(category)
             return redirect(url_for('home', login_session=login_session))
     else: #POST
         if items:
-            db.deleteItems(items)
-        db.deleteCategory(category)
+            db.delete_items(items)
+        db.delete_category(category)
         if utils.request_wants_json(request):
             return 'OK' #TODO
         else:
             return redirect(url_for('home', login_session=login_session))
 
-@app.route('/catalog/category/<string:category_id>/edit')
-def editCategory(category_id):
+@APP.route('/catalog/category/<string:category_id>/edit')
+def edit_category(category_id):
+    ''' Constructs view for editing an existing Category '''
     return 'Edit page for category_id: ' + str(category_id)
 
 ### items
 
-@app.route('/catalog/<string:category_id>/newitem', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='showLogin')
-def newItem(category_id):
+@APP.route('/catalog/<string:category_id>/newitem', methods=['GET', 'POST'])
+@SecurityCheck(session=login_session, login_route='show_login')
+def new_item(category_id):
+    ''' Constructs view for adding an Item to a Category '''
     if request.method == 'POST':
         name = request.form['name']
         description = request.form['description']
         item_id = utils.slugify(name)
-        item = Item(id=item_id, category_id=category_id,
+        item = Item(item_id=item_id, category_id=category_id,
                     name=name, description=description)
-        db.putItem(item)
-        return redirect(url_for('showCategory',
+        db.put_item(item)
+        return redirect(url_for('show_category',
                                 category_id=category_id,
                                 login_session=login_session))
     else:
-        category = db.getCategory(category_id)
+        category = db.get_category(category_id)
         return render_template('item-new.j2',
                                category_name=category.name,
                                category_id=category_id,
                                login_session=login_session)
 
-@app.route('/catalog/<string:category_id>/<string:item_id>')
-def viewItem(item_id, category_id):
-    return render_template('item.j2', item=db.getItem(item_id, category_id),
+@APP.route('/catalog/<string:category_id>/<string:item_id>')
+def view_item(item_id, category_id):
+    ''' Constrcts view for item display. '''
+    return render_template('item.j2', item=db.get_item(item_id, category_id),
                            login_session=login_session)
 
-@app.route('/catalog/<string:category_id>/<string:item_id>/update', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='showLogin')
-def updateItem(item_id, category_id):
+@APP.route('/catalog/<string:category_id>/<string:item_id>/update', methods=['GET', 'POST'])
+@SecurityCheck(session=login_session, login_route='show_login')
+def update_item(item_id, category_id):
+    ''' Constructs view for modifying or updating a given item '''
     if request.method == 'POST':
         name = request.form['name']
         description = request.form['description']
@@ -246,36 +268,38 @@ def updateItem(item_id, category_id):
             changes.update({'name':name})
         if description:
             changes.update({'description':description})
-        item = Item(id=item_id, category_id=category_id)
-        db.updateItem(item, changes)
-        return redirect(url_for('viewItem', item_id=item_id,
+        item = Item(item_id=item_id, category_id=category_id)
+        db.update_item(item, changes)
+        return redirect(url_for('view_item', item_id=item_id,
                                 category_id=category_id,
                                 login_session=login_session))
     else:
         return render_template('item-editor.j2',
-                               item=db.getItem(item_id, category_id),
-                               categories=db.getCategories(),
+                               item=db.get_item(item_id, category_id),
+                               categories=db.get_categories(),
                                login_session=login_session)
 
-@app.route('/catalog/<string:category_id>/<string:item_id>/delete', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='showLogin')
-def deleteItem(item_id, category_id):
+@APP.route('/catalog/<string:category_id>/<string:item_id>/delete', methods=['GET', 'POST'])
+@SecurityCheck(session=login_session, login_route='show_login')
+def delete_item(item_id, category_id):
+    ''' REST API for deleting an item '''
     if request.method == 'POST':
-        db.deleteItem(item_id, category_id)
-        return redirect(url_for('showCategory', category_id=category_id,
+        db.delete_item(item_id, category_id)
+        return redirect(url_for('show_category', category_id=category_id,
                                 login_session=login_session))
     else:
         return 'TODO! Sup girl. You want a delete confirmation or something?'
 
-@app.route('/catalog/item/new', methods=['POST'])
-@SecurityCheck(session=login_session, login_route='showLogin')
-def createItem():
+@APP.route('/catalog/item/new', methods=['POST'])
+@SecurityCheck(session=login_session, login_route='show_login')
+def create_item():
+    ''' REST API for creating new catalog item via POST '''
     if request.json is not None:
         data = request.json
         item = Item(name=data['name'],
                     description=data['description'],
                     category_id=data['category_id'])
-        db.putItem(item)
+        db.put_item(item)
 
         return 'Nice!'
     else:
@@ -283,20 +307,21 @@ def createItem():
 
 
 
-@app.teardown_appcontext
-def shutdown_session(exception):
-    db_session.remove()
+@APP.teardown_appcontext
+def shutdown_session():
+    ''' Cleanup database session. '''
+    DB_SESSION.remove()
 
 ############################################
 
 
 if __name__ == '__main__':
-    config = ConfigParser.SafeConfigParser(
+    CONFIG = ConfigParser.SafeConfigParser(
         {'debug': True, 'host': '0.0.0.0', 'port': 5000})
-    config.read('config.cfg')
+    CONFIG.read('config.cfg')
 
-    app.secret_key = config.get('oauth', 'secret_key')
-    app.client_id = config.get('oauth', 'client_id')
-    app.debug = config.getboolean('server', 'debug')
-    app.run(host=config.get('server', 'host'),
-            port=config.getint('server', 'port'))
+    APP.secret_key = CONFIG.get('oauth', 'secret_key')
+    APP.client_id = CONFIG.get('oauth', 'client_id')
+    APP.debug = CONFIG.getboolean('server', 'debug')
+    APP.run(host=CONFIG.get('server', 'host'),
+            port=CONFIG.getint('server', 'port'))
