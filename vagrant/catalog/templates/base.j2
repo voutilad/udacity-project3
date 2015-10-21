@@ -46,11 +46,11 @@
         Sup, girl.
       {% endblock %}
       </div>
-      <div class="messages">
+      <div class="messages center-block text-center">
         {% with messages = get_flashed_messages() %}
           {% if messages %}
             {% for message in messages %}
-              <div class="alert alert-info">{{ message }}</li>
+              <div class="alert alert-info center-block text-center" style="width:30%;">{{ message }}</li>
             {% endfor %}
           {% endif %}
         {% endwith %}

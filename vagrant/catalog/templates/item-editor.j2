@@ -10,12 +10,14 @@
       <div class="form-group">
         <div class="input-group center-block" style="width: 45%">
           <input type="text" name="name" class="form-control"
-               placeholder="{{item.name}}" aria-describedby="Item Name">
+               placeholder="{{item.name}}" aria-describedby="Item Name"/>
         </div>
         <div class="input-group center-block" style="width: 45%">
           <input type="text" name="description" class="form-control"
-           placeholder="{{item.description}}" aria-describedby="Item Description">
+           placeholder="{{item.description}}" aria-describedby="Item Description"/>
         </div>
+        <input id="category_id" type="hidden" name="category_id"
+         value="{{item_category.category_id}}"/>
       </div>
     </div>
     <!-- Dropdown thingy -->
@@ -23,13 +25,16 @@
       <button class="btn btn-default dropdown-toggle" type="button"
        id="categoryMenu" data-toggle="dropdown" aria-expanded="true"
        style="width: 20%; margin-top: 10px;">
-        Category
+        {{ item_category.name }}
         <span class="caret"></span>
       </button>
-      <ul class="dropdown-menu" role="menu" aria-labelledby="category dropdown" style="transform: translate(-50%, 0); text-align: center; left: 50%;">
+      <ul class="dropdown-menu" role="menu" aria-labelledby="category dropdown"
+       style="transform: translate(-50%, 0); text-align: center; left: 50%; width: 20%;">
         {% for category in categories %}
         <li role="presentation">
-          <a role="menuitem" tabindex="-1" href="#">{{category.name}}</a>
+          <a role="menuitem" tabindex="-1" href="#" data-category-id="{{category.category_id}}">
+            {{category.name}}
+          </a>
         </li>
         {% endfor %}
       </ul>
@@ -45,4 +50,13 @@
     </button>
   </div>
 </form>
+<script>
+  //adopted via http://stackoverflow.com/questions/13437446/how-to-display-selected-item-in-bootstrap-button-dropdown-title
+  $(function() {
+    $('.dropdown-menu li a').click(function(){
+      $('.dropdown-toggle').text($(this).text());
+      $('#category_id').val($(this).data('category-id'));
+    });
+  });
+</script>
 {% endblock %}

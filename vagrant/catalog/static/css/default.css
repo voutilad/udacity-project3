@@ -52,3 +52,12 @@ footer {
 .btn {
   white-space: normal;
 }
+
+.alert {
+  width:30%;
+}
+
+.input-group .form-control {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}

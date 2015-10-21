@@ -1,6 +1,6 @@
 {% extends "base.j2" %}
 {% block main %}
-  <div class="row">
+  <div class="row center-block text-center">
     <div class="col-md-5">
       <h3>Categories</h3>
       <div class="list-group">
@@ -14,7 +14,7 @@
         {% endfor %}
         <div class="row" style="padding-top: 5px;">
           <div class="col-md-4"></div>
-          <a class="col-md-4 btn btn-default center-block" href="{{url_for('new_category')}}">New Category</a>
+          <a class="col-md-4 btn btn-primary center-block" href="{{url_for('new_category')}}">New Category</a>
           <div class="col-md-4"></div>
         </div>
       {% endif %}

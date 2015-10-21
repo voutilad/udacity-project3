@@ -263,19 +263,23 @@ def update_item(item_id, category_id):
     if request.method == 'POST':
         name = request.form['name']
         description = request.form['description']
+        new_category_id = request.form['category_id']
         changes = {'modified_date': 'NOW()'}
         if name:
             changes.update({'name':name})
         if description:
             changes.update({'description':description})
+        if new_category_id:
+            changes.update({'category_id':new_category_id})
         item = Item(item_id=item_id, category_id=category_id)
         db.update_item(item, changes)
         return redirect(url_for('view_item', item_id=item_id,
-                                category_id=category_id,
+                                category_id=new_category_id,
                                 login_session=login_session))
     else:
         return render_template('item-editor.j2',
                                item=db.get_item(item_id, category_id),
+                               item_category=db.get_category(category_id),
                                categories=db.get_categories(),
                                login_session=login_session)
 
