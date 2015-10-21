@@ -20,26 +20,61 @@
           <div class="nav navbar-nav pull-left">
             <a class="navbar-brand" href="/">The Catalog App</a>
           </div>
-          <div class="nav navbar-nav pull-right">
+          <div class="nav navbar-nav pull-right" style="margin-top: 5px;">
           {% if login_session['username'] %}
-            <a href="{{url_for('gdisconnect')}}">
+            <a id="avatar" href="#" data-toggle="popover" data-title="Hello, {{login_session['username']}}!">
               <svg class="avatar">
                   <defs>
                     <clipPath id="circleClip">
-                      <circle cx="25" cy="25" r="25"/>
+                      <circle cx="15" cy="15" r="15"/>
                     </clipPath>
                   </defs>
                   <image xlink:href="{{login_session['picture']}}" x="0" y="0"
-                   height="50" width="50" clip-path="url(#circleClip)"/>
+                   height="30" width="30" clip-path="url(#circleClip)"/>
               </svg>
             </a>
-          {% else %}
-            <a href="{{url_for('show_login')}}">Login</a>
+            <div id="popover_content" style="display: none">
+              <div class="row center-block text-center">
+                <img style="width: 98px; height: 98px; padding:5px;" src="{{login_session['picture']}}" />
+                <a href="{{url_for('gdisconnect')}}" name="logout" class="btn btn-primary">Logout</a>
+              <div>
+            </div>
+          {% else %} <!--Anonymous -->
+            <a id="avatar" href="#" data-toggle="popover" data-title="Hello, Anonymous!">
+              <svg class="avatar">
+                  <defs>
+                    <clipPath id="circleClip">
+                      <circle cx="15" cy="15" r="15"/>
+                    </clipPath>
+                  </defs>
+                  <image xlink:href="https://ssl.gstatic.com/accounts/ui/avatar_2x.png" x="0" y="0"
+                   height="30" width="30" clip-path="url(#circleClip)"/>
+              </svg>
+            </a>
+            <div id="popover_content" style="display: none">
+              <div class="row center-block text-center">
+                <img style="width: 98px; height: 98px; padding:5px;" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+                <a href="{{url_for('gconnect')}}" name="logout" class="btn btn-primary">Sign In</a>
+              <div>
+            </div>
           {% endif %}
           </div>
         </div>
       </div>
     </nav>
+
+    <script>
+      $(function() {
+        $('#avatar').popover({
+          placement: 'bottom',
+          html: true,
+          content: function() {
+            return $('#popover_content').html();
+          }
+        });
+      });
+    </script>
+
     <div class="container-fluid">
       <div class="main">
       {% block main %}
