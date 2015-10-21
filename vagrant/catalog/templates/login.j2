@@ -1,61 +1,7 @@
 {% extends "base.j2" %}
 {% block main %}
-  <script src="https://apis.google.com/js/client:platform.js?onload=start"
-    async defer></script>
 
-  <div class="container text-center">
-
-    <h3>Select a supported authenication provider!</h3>
-    <div id="signinButton">
-      <span class="g-signin"
-        data-scope="openid email"
-        data-clientid="{{client_id}}"
-        data-redirecturi="postmessage"
-        data-accesstype="offline"
-        data-cookiepolicy="single_host_origin"
-        data-callback="signInCallback"
-        data-approvalprompt="force">
-      </span>
-    </div>
-    <div id="fb-root"></div>
-    <script>
-      (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=1635102096770916";
-        fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));
-    </script>
-    <div class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="false" data-auto-logout-link="false"></div>
-    <div id="result"></div>
-  </div>
-  <!-- GOOGLE CONNECT -->
-  <script>
-    function signInCallback(authResult) {
-      if(authResult['code']) {
-        $('#signinButton').attr('style', 'display: none');
-        $.ajax({
-          type: 'POST',
-          url: '/gconnect?state={{state}}',
-          processData: false,
-          contentType: 'application/octet-stream; charset=utf-8',
-          data: authResult['code'],
-          success: function(result) {
-            if(result) {
-              $('#result').html('Login Successful!</br>' + result +
-                '</br>Redirecting...');
-              setTimeout(function() {
-                  window.location.href = '/catalog';
-                }, 4000);
-            }else if(authResult['error']){
-              console.log('There was an error: ' + authResult['error']);
-            }
-          }
-        }); //.ajax
-      }else {
-        $('#result').html('Failed to make server-side call.');
-      }
-    }
-  </script>
+<div class="container text-center">
+  <a class="btn btn-primary" href="{{auth_url}}">Sign in with Google</a>
+</div>
 {% endblock %}

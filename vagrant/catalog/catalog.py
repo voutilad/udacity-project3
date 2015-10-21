@@ -4,16 +4,14 @@ Author: Dave Voutila
 '''
 import ConfigParser
 from flask import Flask, render_template, request, url_for, redirect, jsonify, flash
-import random, string
 from models import Category, Item
 from database import DB_SESSION
-from security import SecurityCheck
 import db, utils
 
 ### security stuff
-from flask import session as login_session, make_response
-from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
-import httplib2, json, requests
+from flask import session as login_session
+from security import SecurityCheck
+import security
 
 APP = Flask(__name__)
 
@@ -21,6 +19,7 @@ APP = Flask(__name__)
 @APP.route('/')
 @APP.route('/catalog')
 def home():
+    ''' Main landing page/view for the Catalog App '''
     categories = DB_SESSION.query(Category).all()
     counts = {}
     for category in categories:
@@ -34,123 +33,59 @@ def home():
 ### session handling & login
 
 @APP.route('/login')
-def show_login():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in xrange(32))
-    login_session['state'] = state
-    return render_template('login.j2',
-                           client_id=APP.client_id, state=state,
-                           login_session=login_session)
+def login():
+    ''' Overloaded web method. GET will generate View, POST initiates
+        the rest of the OAuth2 protocol and workflow '''
 
-@APP.route('/gconnect', methods=['POST'])
-def gconnect():
-    if request.args.get('state') != login_session['state']:
-        response = make_response(json.dumps('Invalid state!'), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+    if not request.args.has_key('code'):
+        state = security.generate_state()
+        login_session['state'] = state
+        return render_template('login.j2',
+                               login_session=login_session,
+                               auth_url=security.get_auth_url(state))
+    else:
+        print request.args.get('state', '')
+        print login_session['state']
+        if request.args.get('state', '') != login_session['state']:
+            print 'Failure to auth user. Mismatch states.'
+            flash('Failed to sign in.')
+            return redirect(url_for('home'))
+        else:
+            credentials = security.validate_code(request.args.get('code'))
+            login_session['credentials'] = credentials.to_json()
+            (access_token, user_id) = security.validate_credentials(credentials)
+            user_data = security.get_user_data(access_token)
+            if user_data is not None:
+                login_session['username'] = user_data['username']
+                login_session['picture'] = user_data['picture']
+                login_session['email'] = user_data['email']
+                login_session['access_token'] = access_token
+                login_session['gplus_id'] = user_id
+                flash('Logged in successfully as ' + login_session['username'])
+        return redirect(url_for('home'))
 
-    code = request.data
-    try:
-        oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
-        oauth_flow.redirect_uri = 'postmessage'
-        credentials = oauth_flow.step2_exchange(code)
-    except FlowExchangeError:
-        msg = 'Failed to upgrade the authorization code.'
-        response = make_response(json.dumps(msg), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
 
-    access_token = credentials.access_token
-    url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
-           % access_token)
-    http = httplib2.Http()
-    result = json.loads(http.request(url, 'GET')[1])
-
-    if result.get('error') is not None:
-        response = make_response(json.dumps(result.get('error'), 501))
-        response.headers['Content-Type'] = 'application/json'
-        return response
-    gplus_id = credentials.id_token['sub']
-
-    if result['user_id'] != gplus_id:
-        msg = "Token's user ID doesn't match."
-        response = make_response(json.dumps(msg), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
-    if result['issued_to'] != APP.client_id:
-        msg = "Token's client ID doesn't match applications"
-        response = make_response(json.dumps(msg), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
-
-    stored_credentials = login_session.get('credentials')
-    stored_gplus_id = login_session.get('gplus_id')
-    if stored_credentials is not None and gplus_id == stored_gplus_id:
-        msg = 'Current user is already connected'
-        response = make_response(json.dumps(msg), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
-
-    login_session['credentials'] = credentials.access_token
-    login_session['gplus_id'] = gplus_id
-
-    #Creep on the user
-    userinfo_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
-    params = {'access_token': credentials.access_token, 'alt': 'json'}
-    answer = requests.get(userinfo_url, params=params)
-
-    data = answer.json()
-    login_session['username'] = data['name']
-    login_session['picture'] = data['picture']
-    login_session['email'] = data['email']
-
-    output = ''
-    output += '<h1>Welcome, '
-    output += login_session['username']
-    output += '!</h1>'
-    output += '<img src="'
-    output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: '
-    output += '150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    print 'User logged in as %s' % login_session['username']
-    return output
 
 @APP.route('/logout')
-def show_logout():
+def logout():
+    ''' Generate Logout view '''
     if login_session is None or not login_session.has_key('credentials'):
         #user not logged in
-        return redirect(url_for('home'))
-
-    return render_template('logout.j2')
-
-@APP.route('/gdisconnect')
-def gdisconnect():
-    if login_session is None or not login_session.has_key('credentials'):
-        response = make_response(json.dumps('User not connected.'), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
-
-    credentials = login_session['credentials']
-    username = login_session['username']
-
-    #access_token = credentials.access_token
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % credentials
-    http = httplib2.Http()
-    result = http.request(url, 'GET')[0]
-
-    if result['status'] == '200':
-        del login_session['credentials']
-        del login_session['gplus_id']
-        del login_session['username']
-        del login_session['email']
-        del login_session['picture']
-
-        flash('Succesfully logged out ' + username)
-        return redirect(url_for('home'))
+        flash('Huh...no user logged in!')
     else:
-        flash('Failed to logout and disconnect session.')
-        return redirect(url_for('home'))
-
+        username = login_session['username']
+        access_token = login_session['access_token']
+        if security.logout_user(username, access_token) == True:
+            flash('Logged out as ' + username)
+            del login_session['credentials']
+            del login_session['access_token']
+            del login_session['gplus_id']
+            del login_session['username']
+            del login_session['email']
+            del login_session['picture']
+        else:
+            flash('Error logging out as ' + username + '!')
+    return redirect(url_for('home'))
 
 ### categories
 
@@ -173,7 +108,7 @@ def show_category(category_id):
                                login_session=login_session)
 
 @APP.route('/catalog/category/new', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='show_login')
+@SecurityCheck(session=login_session, login_route='home')
 def new_category():
     ''' Overloaded method:
             * GET - Constructs view for creating a new Category
@@ -193,7 +128,7 @@ def new_category():
         return render_template('category-new.j2', login_session=login_session)
 
 @APP.route('/catalog/category/<string:category_id>/delete', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='show_login')
+@SecurityCheck(session=login_session, login_route='home')
 def delete_category(category_id):
     ''' Overloaded method:
             * GET - Constructs view for deleting a Category
@@ -230,7 +165,7 @@ def edit_category(category_id):
 ### items
 
 @APP.route('/catalog/<string:category_id>/newitem', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='show_login')
+@SecurityCheck(session=login_session, login_route='home')
 def new_item(category_id):
     ''' Constructs view for adding an Item to a Category '''
     if request.method == 'POST':
@@ -257,7 +192,7 @@ def view_item(item_id, category_id):
                            login_session=login_session)
 
 @APP.route('/catalog/<string:category_id>/<string:item_id>/update', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='show_login')
+@SecurityCheck(session=login_session, login_route='home')
 def update_item(item_id, category_id):
     ''' Constructs view for modifying or updating a given item '''
     if request.method == 'POST':
@@ -284,7 +219,7 @@ def update_item(item_id, category_id):
                                login_session=login_session)
 
 @APP.route('/catalog/<string:category_id>/<string:item_id>/delete', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='show_login')
+@SecurityCheck(session=login_session, login_route='home')
 def delete_item(item_id, category_id):
     ''' REST API for deleting an item '''
     if request.method == 'POST':
@@ -295,7 +230,7 @@ def delete_item(item_id, category_id):
         return 'TODO! Sup girl. You want a delete confirmation or something?'
 
 @APP.route('/catalog/item/new', methods=['POST'])
-@SecurityCheck(session=login_session, login_route='show_login')
+@SecurityCheck(session=login_session, login_route='home')
 def create_item():
     ''' REST API for creating new catalog item via POST '''
     if request.json is not None:

@@ -36,7 +36,7 @@
             <div id="popover_content" style="display: none">
               <div class="row center-block text-center">
                 <img style="width: 98px; height: 98px; padding:5px;" src="{{login_session['picture']}}" />
-                <a href="{{url_for('gdisconnect')}}" name="logout" class="btn btn-primary">Logout</a>
+                <a href="{{url_for('logout')}}" name="logout" class="btn btn-primary">Sign Out</a>
               <div>
             </div>
           {% else %} <!--Anonymous -->
@@ -54,7 +54,7 @@
             <div id="popover_content" style="display: none">
               <div class="row center-block text-center">
                 <img style="width: 98px; height: 98px; padding:5px;" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png" />
-                <a href="{{url_for('gconnect')}}" name="logout" class="btn btn-primary">Sign In</a>
+                <a href="{{url_for('login')}}" name="login" class="btn btn-primary">Sign In</a>
               <div>
             </div>
           {% endif %}
