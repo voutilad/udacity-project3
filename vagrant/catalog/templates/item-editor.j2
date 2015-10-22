@@ -2,52 +2,57 @@
 {% block main %}
 <form name="updateItem" method="POST"
  action="{{url_for('update_item', item_id=item.item_id, category_id=item.category_id)}}">
-  <div class="row center-block text-center">
-    <h3>Update {{ item.name }}</h3>
-  </div>
-  <fieldset>
-    <div class="row center-block text-center">
-      <div class="form-group">
-        <div class="input-group center-block" style="width: 45%">
-          <input type="text" name="name" class="form-control"
-               placeholder="{{item.name}}" aria-describedby="Item Name"/>
+  <div class="panel panel-default row center-block text-center" style="width:60%;">
+    <div class="panel-heading">
+      <h3 class="panel-title">Update {{ item.name }}</h3>
+    </div>
+    <div class="panel-body">
+      <fieldset>
+        <div class="row center-block text-center">
+          <div class="form-group">
+            <div class="input-group center-block" style="width: 45%">
+              <input type="text" name="name" class="form-control"
+                   placeholder="{{item.name}}" aria-describedby="Item Name"/>
+            </div>
+            <div class="input-group center-block" style="width: 45%">
+              <input type="text" name="description" class="form-control"
+               placeholder="{{item.description}}" aria-describedby="Item Description"/>
+            </div>
+            <input id="category_id" type="hidden" name="category_id"
+             value="{{item_category.category_id}}"/>
+            <input name="state" type="hidden" value="{{state}}"/>
+          </div>
         </div>
-        <div class="input-group center-block" style="width: 45%">
-          <input type="text" name="description" class="form-control"
-           placeholder="{{item.description}}" aria-describedby="Item Description"/>
+        <!-- Dropdown thingy -->
+        <div class="dropdown row center-block text-center">
+          <button class="btn btn-default dropdown-toggle" type="button"
+           id="categoryMenu" data-toggle="dropdown" aria-expanded="true"
+           style="width: 45%; margin-top: 10px;">
+            {{ item_category.name }}
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="category dropdown"
+           style="transform: translate(-50%, 0); text-align: center; left: 50%; width: 45%;">
+            {% for category in categories %}
+            <li role="presentation">
+              <a role="menuitem" tabindex="-1" href="#" data-category-id="{{category.category_id}}">
+                {{category.name}}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
         </div>
-        <input id="category_id" type="hidden" name="category_id"
-         value="{{item_category.category_id}}"/>
+        <!-- End Dropdown thingy -->
+      </fieldset>
+      <div class="row center-block text-center" style="padding-top: 10px;">
+        <a class="btn btn-default" href="{{url_for('view_item', item_id=item.item_id, category_id=item.category_id)}}">
+          Cancel
+        </a>
+        <button type="submit" class="btn btn-primary">
+          Save
+        </button>
       </div>
     </div>
-    <!-- Dropdown thingy -->
-    <div class="dropdown row center-block text-center">
-      <button class="btn btn-default dropdown-toggle" type="button"
-       id="categoryMenu" data-toggle="dropdown" aria-expanded="true"
-       style="width: 20%; margin-top: 10px;">
-        {{ item_category.name }}
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" role="menu" aria-labelledby="category dropdown"
-       style="transform: translate(-50%, 0); text-align: center; left: 50%; width: 20%;">
-        {% for category in categories %}
-        <li role="presentation">
-          <a role="menuitem" tabindex="-1" href="#" data-category-id="{{category.category_id}}">
-            {{category.name}}
-          </a>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
-    <!-- End Dropdown thingy -->
-  </fieldset>
-  <div class="row center-block text-center" style="padding-top: 10px;">
-    <a class="btn btn-default" href="{{url_for('view_item', item_id=item.item_id, category_id=item.category_id)}}">
-      Cancel
-    </a>
-    <button type="submit" class="btn btn-primary">
-      Save
-    </button>
   </div>
 </form>
 <script>

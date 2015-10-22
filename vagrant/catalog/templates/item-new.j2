@@ -13,6 +13,7 @@
             placeholder="Item Name" aria-describedby="Category Name">
           <input name="description" type="text" class="form-control"
             placeholder="Description" aria-describedby="Description">
+          <input name="state" type="hidden" value="{{state}}"/>
         </div>
       </div>
     </fieldset>
@@ -20,9 +21,11 @@
   <div class="row center-block text-center" style="padding-top: 10px;">
     <a class="btn btn-default"
      href="{{url_for('show_category', category_id=category_id)}}">
+      <span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
       Cancel
     </a>
     <button type="submit" class="btn btn-primary">
+      <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
       Create
     </button>
   </div>

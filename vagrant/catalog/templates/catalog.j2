@@ -1,9 +1,11 @@
 {% extends "base.j2" %}
 {% block main %}
   <div class="row center-block text-center">
-    <div class="col-md-5">
-      <h3>Categories</h3>
-      <div class="list-group">
+    <div class="panel panel-default pull-left" style="width:49%;">
+      <div class="panel-heading">
+        <h3 class="panel-title">Categories</h3>
+      </div>
+      <div class="panel-body list-group">
       {% if not categories %}
         You have no categories! Why not <a href="{{url_for('new_category')}}">create</a> one?
       {% else %}
@@ -12,17 +14,20 @@
           {{category.name}} ({{counts[category.category_id]}})
         </a>
         {% endfor %}
-        <div class="row" style="padding-top: 5px;">
-          <div class="col-md-4"></div>
-          <a class="col-md-4 btn btn-primary center-block" href="{{url_for('new_category')}}">New Category</a>
-          <div class="col-md-4"></div>
+        <div class="row center-block text-center" style="padding-top: 5px;">
+          <a class="btn btn-primary" href="{{url_for('new_category')}}">
+            <span class="glyphicon glyphicon-plus"></span>
+            New Category
+          </a>
         </div>
       {% endif %}
       </div>
     </div>
-    <div class="col-md-5">
-      <h3>Your Recent Items</h3>
-      <div class="list-group">
+    <div class="panel panel-default pull-right" style="width:49%;">
+      <div class="panel-heading">
+        <h3 class="panel-title">Your Recent Items</h3>
+      </div>
+      <div class="panel-body list-group">
       {% if not items %}
         You have no recent items! Maybe trying viewing some?
       {% else %}
@@ -33,7 +38,7 @@
         </a>
         {% endfor %}
       {% endif %}
-      </div
+      </div>
     </div>
   </div>
 {% endblock %}

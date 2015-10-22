@@ -1,28 +1,33 @@
 {% extends "base.j2" %}
 {% block main %}
 <form id="createCategory" method="POST" action="{{url_for('new_category')}}">
-  <div class="row center-block text-center">
-    <h3>New Category</h3>
-  </div>
-  <div class="row center-block text-center">
-    <fieldset>
-      <div class="form-group">
-        <div class="input-group center-block" style="width: 45%">
-          <input name="name" type="text" class="form-control"
-            placeholder="Name" aria-describedby="Category Name">
-          <input name="description" type="text" class="form-control"
-            placeholder="Description" aria-describedby="Description">
+  <div class="panel panel-default row center-block text-center" style="width:60%;">
+    <div class="panel-heading">
+      <h3 class="panel-title">New Category</h3>
+    </div>
+    <div class="panel-body">
+      <fieldset>
+        <div class="form-group">
+          <div class="input-group center-block" style="width: 45%">
+            <input name="name" type="text" class="form-control"
+              placeholder="Name" aria-describedby="Category Name">
+            <input name="description" type="text" class="form-control"
+              placeholder="Description" aria-describedby="Description">
+            <input name="state" type="hidden" value="{{state}}"/>
+          </div>
         </div>
+      </fieldset>
+      <div class="row center-block text-center" style="padding-top: 10px;">
+        <a class="btn btn-default" href="{{url_for('home')}}">
+          <span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
+          Cancel
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+          Create
+        </button>
       </div>
-    </fieldset>
-  </div>
-  <div class="row center-block text-center" style="padding-top: 10px;">
-    <a class="btn btn-default" href="{{url_for('home')}}">
-      Cancel
-    </a>
-    <button type="submit" class="btn btn-primary">
-      Create
-    </button>
+    </div>
   </div>
 </form>
 {% endblock %}

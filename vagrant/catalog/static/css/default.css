@@ -6,6 +6,7 @@ html {
 body {
   padding-top: 75px;
   margin-bottom: 60px;
+  background-color: #dddddd;
 }
 
 footer {
@@ -60,4 +61,13 @@ footer {
 .input-group .form-control {
   margin-top: 3px;
   margin-bottom: 3px;
+}
+
+.google-signin {
+  width: 145px;
+  height: auto;
+}
+
+.popover-title {
+  text-align: center;
 }
