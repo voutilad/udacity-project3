@@ -9,6 +9,9 @@
   {% for item in items %}
   <div class="panel panel-default center-block" style="width:80%">
     <div class="panel-heading clearfix">
+      {% if item.picture %}
+        <img src="{{url_for('load_image', picture_id=item.picture)}}" alt="{{item.name}}"></img>
+      {% endif %}
       <h3 class="panel-title pull-left" style="padding-top: 7.5px;">{{item.name}}</h3>
       <div class="btn-group pull-right">
         <form name="deleteItem" method="POST"

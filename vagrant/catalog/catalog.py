@@ -168,6 +168,10 @@ def edit_category(category_id):
 def new_item(category_id):
     ''' Constructs view for adding an Item to a Category '''
     if request.method == 'POST':
+        if not security.validate_state(login_session,
+                                       request.form.get('state', '')):
+            flash('Error: invalid state!')
+            return redirect(url_for('new_item', category_id=category_id))
         name = request.form['name']
         description = request.form['description']
         item_id = utils.slugify(name)
@@ -182,7 +186,8 @@ def new_item(category_id):
         return render_template('item-new.j2',
                                category_name=category.name,
                                category_id=category_id,
-                               login_session=login_session)
+                               login_session=login_session,
+                               state=login_session.get('state',''))
 
 @APP.route('/catalog/<string:category_id>/<string:item_id>')
 def view_item(item_id, category_id):
@@ -198,6 +203,11 @@ def view_item(item_id, category_id):
 def update_item(item_id, category_id):
     ''' Constructs view for modifying or updating a given item '''
     if request.method == 'POST':
+        if not security.validate_state(login_session,
+                                       request.form.get('state', '')):
+            flash('Error: invalid state!')
+            return redirect(url_for('update_item', item_id=item_id,
+                                    category_id=category_id))
         name = request.form['name']
         description = request.form['description']
         new_category_id = request.form['category_id']
@@ -218,7 +228,8 @@ def update_item(item_id, category_id):
                                item=db.get_item(item_id, category_id),
                                item_category=db.get_category(category_id),
                                categories=db.get_categories(),
-                               login_session=login_session)
+                               login_session=login_session,
+                               state=login_session.get('state',''))
 
 @APP.route('/catalog/<string:category_id>/<string:item_id>/delete', methods=['GET', 'POST'])
 @SecurityCheck(session=login_session, login_route='home')
