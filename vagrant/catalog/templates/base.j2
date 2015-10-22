@@ -54,7 +54,10 @@
             <div id="popover_content" style="display: none">
               <div class="row center-block text-center">
                 <img style="width: 98px; height: 98px; padding:5px;" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png" />
-                <a href="{{url_for('login')}}" name="login" class="btn btn-primary">Sign In</a>
+                <a href="{{url_for('login')}}" name="login">
+                  <img src="{{url_for('static', filename='img/btn_google_signin_dark_normal_web.png')}}"
+                   alt="Sign In" style="width:193px; height:auto;"/>
+                </a>
               <div>
             </div>
           {% endif %}
