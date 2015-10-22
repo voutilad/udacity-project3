@@ -3,6 +3,7 @@
   <div class="row center-block text-center">
     <div class="panel panel-default pull-left" style="width:49%;">
       <div class="panel-heading">
+        <span class="pull-left glyphicon glyphicon-folder-open" style="padding-right:8px;"></span>
         <h3 class="panel-title">Categories</h3>
       </div>
       <div class="panel-body list-group">
@@ -14,7 +15,7 @@
           {{category.name}} ({{counts[category.category_id]}})
         </a>
         {% endfor %}
-        <div class="row center-block text-center" style="padding-top: 5px;">
+        <div class="row center-block text-center" style="padding-top: 15px;">
           <a class="btn btn-primary" href="{{url_for('new_category')}}">
             <span class="glyphicon glyphicon-plus"></span>
             New Category
@@ -25,6 +26,7 @@
     </div>
     <div class="panel panel-default pull-right" style="width:49%;">
       <div class="panel-heading">
+        <span class="pull-left glyphicon glyphicon-th-large" style="padding-right:8px;"></span>
         <h3 class="panel-title">Your Recent Items</h3>
       </div>
       <div class="panel-body list-group">

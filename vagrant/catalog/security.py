@@ -57,6 +57,14 @@ def generate_state():
     ''' Generate a OAuth2 state token '''
     return hashlib.sha256(os.urandom(1024)).hexdigest()
 
+def validate_state(session, state):
+    ''' Simple sanity check if the given state matches the stored state for
+        the user's session.
+    '''
+    server_state = session.get('state')
+    if state is None or server_state is None:
+        return False
+    return server_state == state
 
 def get_auth_url(state):
     ''' Return the URL to Google's OAuth2 service. '''

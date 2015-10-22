@@ -28,8 +28,9 @@
           <button class="btn btn-default dropdown-toggle" type="button"
            id="categoryMenu" data-toggle="dropdown" aria-expanded="true"
            style="width: 45%; margin-top: 10px;">
-            {{ item_category.name }}
-            <span class="caret"></span>
+             <span class="glyphicon glyphicon-folder-open pull-left" aria-hidden="true"></span>
+             {{ item_category.name }}
+             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu" aria-labelledby="category dropdown"
            style="transform: translate(-50%, 0); text-align: center; left: 50%; width: 45%;">
@@ -46,9 +47,11 @@
       </fieldset>
       <div class="row center-block text-center" style="padding-top: 10px;">
         <a class="btn btn-default" href="{{url_for('view_item', item_id=item.item_id, category_id=item.category_id)}}">
+          <span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
           Cancel
         </a>
         <button type="submit" class="btn btn-primary">
+          <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
           Save
         </button>
       </div>
@@ -59,7 +62,10 @@
   //adopted via http://stackoverflow.com/questions/13437446/how-to-display-selected-item-in-bootstrap-button-dropdown-title
   $(function() {
     $('.dropdown-menu li a').click(function(){
-      $('.dropdown-toggle').text($(this).text());
+      var html = '<span class="glyphicon glyphicon-folder-open pull-left" aria-hidden="true"></span>'
+      html = html + $(this).text()
+      $('.dropdown-toggle').html(html);
+
       $('#category_id').val($(this).data('category-id'));
     });
   });

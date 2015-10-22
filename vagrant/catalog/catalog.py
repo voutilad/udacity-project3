@@ -187,8 +187,11 @@ def new_item(category_id):
 @APP.route('/catalog/<string:category_id>/<string:item_id>')
 def view_item(item_id, category_id):
     ''' Constrcts view for item display. '''
-    return render_template('item.j2', item=db.get_item(item_id, category_id),
-                           login_session=login_session)
+    category_name = db.get_category(category_id).name
+    return render_template('item.j2',
+                           item=db.get_item(item_id, category_id),
+                           login_session=login_session,
+                           category_name=category_name)
 
 @APP.route('/catalog/<string:category_id>/<string:item_id>/update', methods=['GET', 'POST'])
 @SecurityCheck(session=login_session, login_route='home')
