@@ -40,9 +40,7 @@ def login():
     if not request.args.has_key('code'):
         state = security.generate_state()
         login_session['state'] = state
-        return render_template('login.j2',
-                               login_session=login_session,
-                               auth_url=security.get_auth_url(state))
+        return redirect(security.get_auth_url(state))
     else:
         print request.args.get('state', '')
         print login_session['state']
@@ -83,6 +81,7 @@ def logout():
             del login_session['username']
             del login_session['email']
             del login_session['picture']
+            del login_session['state']
         else:
             flash('Error logging out as ' + username + '!')
     return redirect(url_for('home'))
