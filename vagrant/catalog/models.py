@@ -87,12 +87,11 @@ class User(BASE):
     name = Column(String)
     email = Column(String)
     picture = Column(String)
-    service = Column(String)
+    login_date = Column(DateTime, server_default=text('NOW()'))
 
-    def __init__(self, user_id=None, name=None, email=None,
-                 picture=None, service=None):
+    def __init__(self, user_id=None, name=None, email=None, picture=None):
         self.user_id = user_id
         self.name = name
         self.email = email
         self.picture = picture
-        self.service = service
+        self.login_date = datetime.now()

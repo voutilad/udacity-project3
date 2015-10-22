@@ -3,7 +3,10 @@ from models import Category, Item
 from database import DB_SESSION
 from sqlalchemy.exc import IntegrityError
 
-
+def register_user(user):
+    ''' Record a user or update the last login datetime '''
+    pass
+    
 def get_item(item_id, category_id):
     ''' Retrieve an item by item_id and category_id from the database. '''
     item = DB_SESSION.query(Item).filter(Item.item_id == item_id, Item.category_id == category_id).one()
