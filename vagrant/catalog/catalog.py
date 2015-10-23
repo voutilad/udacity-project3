@@ -4,7 +4,7 @@ Author: Dave Voutila
 '''
 import ConfigParser
 from flask import Flask, render_template, request, url_for, redirect, jsonify, flash
-from models import Category, Item
+from models import Category, Item, User
 from database import DB_SESSION
 import db, utils
 
@@ -59,6 +59,12 @@ def login():
                 login_session['email'] = user_data['email']
                 login_session['access_token'] = access_token
                 login_session['gplus_id'] = user_id
+                if db.get_user(login_session['username']) is None:
+                    db.register_user(User(user_id=login_session['email'],
+                                          name=login_session['username'],
+                                          email=login_session['email'],
+                                          picture=login_session['picture']))
+
                 flash('Logged in successfully as ' + login_session['username'])
         return redirect(url_for('home'))
 
@@ -117,9 +123,11 @@ def new_category():
         name = request.form['name']
         description = request.form['description']
         category_id = utils.slugify(name)
+        user = db.get_user(login_session['email'])
         db.put_category(Category(category_id=category_id,
                                  name=name,
-                                 description=description))
+                                 description=description,
+                                 created_by_id=user.user_id))
         return redirect(url_for('show_category',
                                 category_id=category_id,
                                 login_session=login_session))
@@ -175,8 +183,10 @@ def new_item(category_id):
         name = request.form['name']
         description = request.form['description']
         item_id = utils.slugify(name)
+        user = db.get_user(login_session['email'])
         item = Item(item_id=item_id, category_id=category_id,
-                    name=name, description=description)
+                    name=name, description=description,
+                    created_by_id=user.user_id)
         db.put_item(item)
         return redirect(url_for('show_category',
                                 category_id=category_id,
@@ -187,14 +197,17 @@ def new_item(category_id):
                                category_name=category.name,
                                category_id=category_id,
                                login_session=login_session,
-                               state=login_session.get('state',''))
+                               state=login_session.get('state', ''))
 
 @APP.route('/catalog/<string:category_id>/<string:item_id>')
 def view_item(item_id, category_id):
     ''' Constrcts view for item display. '''
     category_name = db.get_category(category_id).name
+    item = db.get_item(item_id, category_id)
+    creator = db.get_user(item.created_by_id)
     return render_template('item.j2',
-                           item=db.get_item(item_id, category_id),
+                           item=item,
+                           creator=creator,
                            login_session=login_session,
                            category_name=category_name)
 
@@ -229,7 +242,7 @@ def update_item(item_id, category_id):
                                item_category=db.get_category(category_id),
                                categories=db.get_categories(),
                                login_session=login_session,
-                               state=login_session.get('state',''))
+                               state=login_session.get('state', ''))
 
 @APP.route('/catalog/<string:category_id>/<string:item_id>/delete', methods=['GET', 'POST'])
 @SecurityCheck(session=login_session, login_route='home')

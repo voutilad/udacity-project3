@@ -6,11 +6,13 @@
     <div class="panel-heading">
       <h3 class="panel-title">
         {{ item.name }}
-        <span class="pull-right glyphicon glyphicon-folder-open"></span>
-        <span class="pull-right italic" style="padding-right:8px;">{{category_name}}</span>
+        <img class="pull-right" style="width: 20px; height: auto; border-radius:2px;"
+         src="{{creator.picture}}" alt="{{creator.username}}"/>
       </h3>
     </div>
     <div class="panel-body">
+      <span class="pull-right glyphicon glyphicon-folder-open"></span>
+      <span class="pull-right italic" style="padding-right:8px;">{{category_name}}</span>
       <span>{{ item.description }}</span>
       {% if picture %}
       <img src="{{picture}}" alt="{{item.name}}"/>

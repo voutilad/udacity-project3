@@ -1,15 +1,37 @@
 ''' Database methods for CRUD '''
-from models import Category, Item
+from models import Category, Item, User
 from database import DB_SESSION
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import NoResultFound
 
 def register_user(user):
     ''' Record a user or update the last login datetime '''
-    pass
-    
+    try:
+        DB_SESSION.add(user)
+        print '[db]>> Registered previously unknown user: ' + str(user.user_id)
+        DB_SESSION.commit()
+        return True
+    except IntegrityError as error:
+        print '[db]>> ERROR:' + str(error)
+        DB_SESSION.rollback()
+        return False
+
+def get_user(user_id):
+    try:
+        user = DB_SESSION.query(User).filter(User.user_id == user_id).one()
+    except NoResultFound:
+        print '[db]>> Could not look up user with user_id: ' + str(user_id)
+        return None
+    return user
+
 def get_item(item_id, category_id):
     ''' Retrieve an item by item_id and category_id from the database. '''
-    item = DB_SESSION.query(Item).filter(Item.item_id == item_id, Item.category_id == category_id).one()
+    try:
+        item = DB_SESSION.query(Item).filter(Item.item_id == item_id, Item.category_id == category_id).one()
+    except NoResultFound:
+        msg = '[db]>> No item found for item_id: ' + str(item_id)
+        print msg + ', category_id: ' + str(category_id)
+        return None
     return item
 
 def put_item(item):
@@ -73,7 +95,10 @@ def delete_category(category):
 
 def get_category(category_id):
     ''' Retrieve a given Category by id from the database. '''
-    category = DB_SESSION.query(Category).filter(Category.category_id == category_id).one()
+    try:
+        category = DB_SESSION.query(Category).filter(Category.category_id == category_id).one()
+    except NoResultFound:
+        print '[db]>> No category found for id ' + str(category_id)
     return category
 
 def get_items(category_id):
