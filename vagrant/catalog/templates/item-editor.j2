@@ -8,13 +8,20 @@
     </div>
     <div class="panel-body">
       <fieldset>
+        <div class="row pull-left" style="padding-left: 10px; padding-top: 10px;">
+          {% if item.picture %}
+            <img src="{{item.picture}}" alt="{{item.name}}"></img>
+          {% else %}
+            <img src="http://placehold.it/120x120" alt="Click to add an image!"></img>
+          {% endif %}
+        </div>
         <div class="row center-block text-center">
           <div class="form-group">
-            <div class="input-group center-block" style="width: 45%">
+            <div class="input-group center-block" style="width: 50%">
               <input type="text" name="name" class="form-control"
                    placeholder="{{item.name}}" aria-describedby="Item Name"/>
             </div>
-            <div class="input-group center-block" style="width: 45%">
+            <div class="input-group center-block" style="width: 50%">
               <input type="text" name="description" class="form-control"
                placeholder="{{item.description}}" aria-describedby="Item Description"/>
             </div>
@@ -22,28 +29,29 @@
              value="{{item_category.category_id}}"/>
             <input name="state" type="hidden" value="{{state}}"/>
           </div>
+          <!-- Dropdown thingy -->
+          <div class="dropdown row center-block text-center">
+            <button class="btn btn-default dropdown-toggle" type="button"
+             id="categoryMenu" data-toggle="dropdown" aria-expanded="true"
+             style="width: 45%; margin-top: 10px;">
+               <span class="glyphicon glyphicon-folder-open pull-left" aria-hidden="true"></span>
+               {{ item_category.name }}
+               <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="category dropdown"
+             style="transform: translate(-50%, 0); text-align: center; left: 50%; width: 45%;">
+              {% for category in categories %}
+              <li role="presentation">
+                <a role="menuitem" tabindex="-1" href="#" data-category-id="{{category.category_id}}">
+                  {{category.name}}
+                </a>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+          <!-- End Dropdown thingy -->
         </div>
-        <!-- Dropdown thingy -->
-        <div class="dropdown row center-block text-center">
-          <button class="btn btn-default dropdown-toggle" type="button"
-           id="categoryMenu" data-toggle="dropdown" aria-expanded="true"
-           style="width: 45%; margin-top: 10px;">
-             <span class="glyphicon glyphicon-folder-open pull-left" aria-hidden="true"></span>
-             {{ item_category.name }}
-             <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="category dropdown"
-           style="transform: translate(-50%, 0); text-align: center; left: 50%; width: 45%;">
-            {% for category in categories %}
-            <li role="presentation">
-              <a role="menuitem" tabindex="-1" href="#" data-category-id="{{category.category_id}}">
-                {{category.name}}
-              </a>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-        <!-- End Dropdown thingy -->
+
       </fieldset>
       <div class="row center-block text-center" style="padding-top: 10px;">
         <a class="btn btn-default" href="{{url_for('view_item', item_id=item.item_id, category_id=item.category_id)}}">

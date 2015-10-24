@@ -74,6 +74,7 @@ class Item(BASE):
     category_id = Column(String, ForeignKey(Category.category_id), primary_key=True)
     category = relationship(Category)
 
+    #pylint: disable=R0913
     def __init__(self, item_id=None, name=None, description=None,
                  category_id=None, created_by_id=None):
         self.item_id = item_id

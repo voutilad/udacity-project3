@@ -17,6 +17,7 @@ def register_user(user):
         return False
 
 def get_user(user_id):
+    ''' Look up a User by their unique id (often email) '''
     try:
         user = DB_SESSION.query(User).filter(User.user_id == user_id).one()
     except NoResultFound:
@@ -27,7 +28,8 @@ def get_user(user_id):
 def get_item(item_id, category_id):
     ''' Retrieve an item by item_id and category_id from the database. '''
     try:
-        item = DB_SESSION.query(Item).filter(Item.item_id == item_id, Item.category_id == category_id).one()
+        item = DB_SESSION.query(Item).filter(Item.item_id == item_id,
+                                             Item.category_id == category_id).one()
     except NoResultFound:
         msg = '[db]>> No item found for item_id: ' + str(item_id)
         print msg + ', category_id: ' + str(category_id)

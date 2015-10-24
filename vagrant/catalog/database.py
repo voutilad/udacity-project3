@@ -25,7 +25,6 @@ def init_db():
         print 'Database does not exist. Attempting to first create database ' + __DATABASE_NAME
 
         try:
-            #See: http://stackoverflow.com/questions/6506578/how-to-create-a-new-database-using-sqlalchemy
             conn = create_engine('postgresql://vagrant@/vagrant').connect()
             conn.execute('commit')
             conn.execute('CREATE DATABASE ' + __DATABASE_NAME + ';')

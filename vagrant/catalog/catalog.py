@@ -11,9 +11,15 @@ import db, utils
 ### security stuff
 from flask import session as login_session
 from security import SecurityCheck
-import security
+from werkzeug.utils import secure_filename
+import security, os
+
+UPLOAD_FOLDER = '/vagrant/catalog/uploads'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 APP = Flask(__name__)
+APP.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+APP.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 
 @APP.route('/')

@@ -10,7 +10,11 @@
   <div class="panel panel-default center-block" style="width:80%">
     <div class="panel-heading clearfix">
       {% if item.picture %}
-        <img src="{{url_for('load_image', picture_id=item.picture)}}" alt="{{item.name}}"></img>
+        <img class="pull-left" style="padding-right:5px; padding-top: 7.5px;"
+         src="{{url_for('load_image', picture_id=item.picture)}}" alt="{{item.name}}"></img>
+      {% else %}
+        <img class="pull-left" style="padding-right:5px; padding-top: 7.5px;"
+         src="http://placehold.it/15x15" alt="{{item.name}}"></img>
       {% endif %}
       <h3 class="panel-title pull-left" style="padding-top: 7.5px;">{{item.name}}</h3>
       <div class="btn-group pull-right">
@@ -38,7 +42,7 @@
   <strong>This category has no items!</strong>
 </div>
 {% endif %}
-  <div class="btn-group">
+  <div class="row center-block">
     <a href="{{url_for('delete_category', category_id=category.category_id)}}"
      class="btn btn-default">
      <span class="glyphicon glyphicon-trash"></span>
