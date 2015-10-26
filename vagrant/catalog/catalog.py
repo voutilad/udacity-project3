@@ -11,11 +11,10 @@ import db, utils
 ### security stuff
 from flask import session as login_session
 from security import SecurityCheck
-from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename, escape
 import security, os
 
 UPLOAD_FOLDER = '/vagrant/catalog/uploads'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 APP = Flask(__name__)
 APP.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -36,7 +35,6 @@ def home():
                            items=items, counts=counts,
                            login_session=login_session)
 
-### session handling & login
 
 @APP.route('/login')
 def login():
@@ -216,6 +214,14 @@ def view_item(item_id, category_id):
                            creator=creator,
                            login_session=login_session,
                            category_name=category_name)
+
+@APP.route('/catalog/<string:category_id>/<string:item_id>/<string:filename>', methods=['POST'])
+@SecurityCheck(session=login_session, login_route='home')
+def upload_item_image(item_id, category_id, filename):
+    ''' Service endpoint for uploading images and associating them with items.
+        Only accepts POST of file binary data.
+    '''
+
 
 @APP.route('/catalog/<string:category_id>/<string:item_id>/update', methods=['GET', 'POST'])
 @SecurityCheck(session=login_session, login_route='home')

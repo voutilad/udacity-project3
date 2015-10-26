@@ -4,8 +4,8 @@ from unicodedata import normalize
     Utility functions and/or classes, some borrowed. Where borrowed, see the
     functions description for external reference.
 """
-
-_punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+_PUNCT_RE = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
 
 def slugify(text, delim=u'-'):
     """
@@ -20,7 +20,7 @@ def slugify(text, delim=u'-'):
             string value of the slugified text
     """
     result = []
-    for word in _punct_re.split(text.lower()):
+    for word in _PUNCT_RE.split(text.lower()):
         word = normalize('NFKD', word).encode('ascii', 'ignore')
         if word:
             result.append(word)
@@ -41,3 +41,8 @@ def request_wants_json(request):
     return best == 'application/json' and \
         request.accept_mimetypes[best] > \
         request.accept_mimetypes['text/html']
+
+def allowed_file(filename):
+    ''' Check if filename provided matches allowed uploadable file types '''
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
