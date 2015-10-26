@@ -67,6 +67,7 @@ class Item(BASE):
     item_id = Column(String, primary_key=True)
     name = Column(String)
     description = Column(String)
+    picture = Column(String)
     created_date = Column(DateTime, server_default=text('NOW()'))
     modified_date = Column(DateTime, server_default=text('NOW()'))
     created_by_id = Column(String, ForeignKey(User.user_id))
@@ -84,6 +85,7 @@ class Item(BASE):
         self.created_date = datetime.now()
         self.modified_date = datetime.now()
         self.created_by_id = created_by_id
+        self.picture = None
 
     def __str__(self):
         pattern = '<item [name: {name}, item_id: {item_id}, '

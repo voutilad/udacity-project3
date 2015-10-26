@@ -14,11 +14,11 @@
       <span class="pull-right glyphicon glyphicon-folder-open"></span>
       <span class="pull-right italic" style="padding-right:8px;">{{category_name}}</span>
       <span>{{ item.description }}</span>
-      {% if picture %}
-      <img class="pull-left" style="padding-right: 8px;"
-       src="{{picture}}" alt="{{item.name}}"/>
+      {% if item.picture %}
+      <img class="item-picture pull-left" style="padding-right: 8px;"
+       src="{{url_for('static', filename=item.picture)}}" alt="{{item.name}}"/>
       {% else %}
-      <img class="pull-left" style="padding-right: 8px;"
+      <img class="item-picture pull-left" style="padding-right: 8px;"
        src="http://placehold.it/50x50" alt="Click to add a picture!"></img>
       {% endif %}
       <div class="row center-block text-center" style="padding-top: 20px;">

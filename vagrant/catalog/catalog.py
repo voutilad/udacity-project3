@@ -14,7 +14,8 @@ from security import SecurityCheck
 from werkzeug.utils import secure_filename, escape
 import security, os
 
-UPLOAD_FOLDER = '/vagrant/catalog/uploads'
+UPLOAD_PREFIX = './static/'
+UPLOAD_FOLDER = 'uploads'
 
 APP = Flask(__name__)
 APP.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -215,14 +216,6 @@ def view_item(item_id, category_id):
                            login_session=login_session,
                            category_name=category_name)
 
-@APP.route('/catalog/<string:category_id>/<string:item_id>/<string:filename>', methods=['POST'])
-@SecurityCheck(session=login_session, login_route='home')
-def upload_item_image(item_id, category_id, filename):
-    ''' Service endpoint for uploading images and associating them with items.
-        Only accepts POST of file binary data.
-    '''
-
-
 @APP.route('/catalog/<string:category_id>/<string:item_id>/update', methods=['GET', 'POST'])
 @SecurityCheck(session=login_session, login_route='home')
 def update_item(item_id, category_id):
@@ -236,6 +229,12 @@ def update_item(item_id, category_id):
         name = request.form['name']
         description = request.form['description']
         new_category_id = request.form['category_id']
+        picture = None
+        image = request.files['file']
+        if image and utils.allowed_file(image.filename):
+            filename = secure_filename(item_id)
+            picture = os.path.join(APP.config['UPLOAD_FOLDER'], filename)
+            image.save(os.path.join(UPLOAD_PREFIX, UPLOAD_FOLDER, filename))
         changes = {'modified_date': 'NOW()'}
         if name:
             changes.update({'name':name})
@@ -243,6 +242,8 @@ def update_item(item_id, category_id):
             changes.update({'description':description})
         if new_category_id:
             changes.update({'category_id':new_category_id})
+        if picture:
+            changes.update({'picture':picture})
         item = Item(item_id=item_id, category_id=category_id)
         db.update_item(item, changes)
         return redirect(url_for('view_item', item_id=item_id,
@@ -281,7 +282,6 @@ def create_item():
         return 'Nice!'
     else:
         return 'ERROR!'
-
 
 
 @APP.teardown_appcontext
