@@ -196,9 +196,16 @@ def new_item(category_id):
         description = request.form['description']
         item_id = utils.slugify(name)
         user = db.get_user(login_session['email'])
+        picture = None
+        image = request.files['file']
+        if image and utils.allowed_file(image.filename):
+            filename = secure_filename(item_id)
+            picture = os.path.join(APP.config['UPLOAD_FOLDER'], filename)
+            image.save(os.path.join(UPLOAD_PREFIX, UPLOAD_FOLDER, filename))
         item = Item(item_id=item_id, category_id=category_id,
                     name=name, description=description,
                     created_by_id=user.user_id)
+        item.picture = picture
         db.put_item(item)
         return redirect(url_for('view_category',
                                 category_id=category_id,

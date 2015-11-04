@@ -1,6 +1,6 @@
 {% extends "base.j2" %}
 {% block main %}
-<form id="createItem" method="POST"
+<form id="createItem" method="POST" enctype="multipart/form-data"
  action="{{url_for('new_item', category_id=category_id)}}">
   <div class="panel panel-default row center-block text-center" style="width:60%;">
     <div class="panel-heading">
