@@ -22,7 +22,7 @@
           </div>
           <ul class="nav navbar-nav pull-right" style="margin-top: 5px;">
           {% if login_session['username'] %}
-            <li class="username">Hello, {{login_session['username']}}!</li>
+            <li class="username">{{login_session['username']}}</li>
             <li>
               <a id="avatar" href="#" data-toggle="popover" data-title="Hello, {{login_session['username']}}!">
                 <svg class="avatar">
