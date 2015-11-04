@@ -32,7 +32,7 @@ class SecurityCheck(object):
                 return function(*args, **kwargs)
             else:
                 flash('Please login to perform that action.')
-                return redirect(url_for(self.login_route))
+                return redirect(url_for(self.login_route, *args, **kwargs))
 
         return decorated_function
 

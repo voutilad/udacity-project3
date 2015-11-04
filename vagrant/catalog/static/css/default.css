@@ -17,6 +17,19 @@ footer {
 
 }
 
+.messages {
+  margin-top: 10px;
+}
+
+.username {
+  height: 50px;
+  line-height: 20px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  color: rgb(157, 157, 157);
+  font-size: smaller;
+}
+
 .container {
   width: auto;
   padding: 0 15px;
@@ -47,7 +60,7 @@ footer {
 }
 
 .avatar {
-  margin-top: 5px;
+  margin-top: 10px;
   width: 30px;
   height: 30px;
 }
@@ -88,4 +101,11 @@ footer {
 
 .italic {
   font-style: italic;
+}
+
+.nav>li>a {
+  padding-left: 5px;
+  padding-right: 0px;
+  padding-top:0px;
+  padding-bottom:0px;
 }

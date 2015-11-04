@@ -11,7 +11,7 @@
         You have no categories! Why not <a href="{{url_for('new_category')}}">create</a> one?
       {% else %}
         {% for category in categories %}
-        <a class="list-group-item" href="{{url_for('show_category', category_id=category.category_id)}}">
+        <a class="list-group-item" href="{{url_for('view_category', category_id=category.category_id)}}">
           {{category.name}} ({{counts[category.category_id]}})
         </a>
         {% endfor %}

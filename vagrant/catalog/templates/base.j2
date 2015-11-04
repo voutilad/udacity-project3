@@ -20,48 +20,54 @@
           <div class="nav navbar-nav pull-left">
             <a class="navbar-brand" href="/">The Catalog App</a>
           </div>
-          <div class="nav navbar-nav pull-right" style="margin-top: 5px;">
+          <ul class="nav navbar-nav pull-right" style="margin-top: 5px;">
           {% if login_session['username'] %}
-            <a id="avatar" href="#" data-toggle="popover" data-title="Hello, {{login_session['username']}}!">
-              <svg class="avatar">
-                  <defs>
-                    <clipPath id="circleClip">
-                      <circle cx="15" cy="15" r="15"/>
-                    </clipPath>
-                  </defs>
-                  <image xlink:href="{{login_session['picture']}}" x="0" y="0"
-                   height="30" width="30" clip-path="url(#circleClip)"/>
-              </svg>
-            </a>
-            <div id="popover_content" style="display: none">
-              <div class="row center-block text-center">
-                <img style="width: 98px; height: 98px; padding:5px;" src="{{login_session['picture']}}" />
-                <a href="{{url_for('logout')}}" name="logout" class="btn btn-primary">Sign Out</a>
-              <div>
-            </div>
+            <li class="username">Hello, {{login_session['username']}}!</li>
+            <li>
+              <a id="avatar" href="#" data-toggle="popover" data-title="Hello, {{login_session['username']}}!">
+                <svg class="avatar">
+                    <defs>
+                      <clipPath id="circleClip">
+                        <circle cx="15" cy="15" r="15"/>
+                      </clipPath>
+                    </defs>
+                    <image xlink:href="{{login_session['picture']}}" x="0" y="0"
+                     height="30" width="30" clip-path="url(#circleClip)"/>
+                </svg>
+              </a>
+              <div id="popover_content" style="display: none">
+                <div class="row center-block text-center">
+                  <img style="width: 98px; height: 98px; padding:5px;" src="{{login_session['picture']}}" />
+                  <a href="{{url_for('logout')}}" name="logout" class="btn btn-primary">Sign Out</a>
+                </div>
+              </div>
+            </li>
           {% else %} <!--Anonymous -->
-            <a id="avatar" href="#" data-toggle="popover" data-title="Hello, Anonymous!">
-              <svg class="avatar">
-                  <defs>
-                    <clipPath id="circleClip">
-                      <circle cx="15" cy="15" r="15"/>
-                    </clipPath>
-                  </defs>
-                  <image xlink:href="https://ssl.gstatic.com/accounts/ui/avatar_2x.png" x="0" y="0"
-                   height="30" width="30" clip-path="url(#circleClip)"/>
-              </svg>
-            </a>
-            <div id="popover_content" style="display: none">
-              <div class="row center-block text-center">
-                <img style="width: 98px; height: 98px; padding:5px;" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png" />
-                <a href="{{url_for('login')}}" name="login">
-                  <img src="{{url_for('static', filename='img/btn_google_signin_dark_normal_web.png')}}"
-                   alt="Sign In" class="google-signin"/>
-                </a>
-              <div>
-            </div>
+            <li class="username">Anonymous</li>
+            <li>
+              <a id="avatar" href="#" data-toggle="popover" data-title="Hello, Anonymous!">
+                <svg class="avatar">
+                    <defs>
+                      <clipPath id="circleClip">
+                        <circle cx="15" cy="15" r="15"/>
+                      </clipPath>
+                    </defs>
+                    <image xlink:href="https://ssl.gstatic.com/accounts/ui/avatar_2x.png" x="0" y="0"
+                     height="30" width="30" clip-path="url(#circleClip)"/>
+                </svg>
+              </a>
+              <div id="popover_content" style="display: none">
+                <div class="row center-block text-center">
+                  <img style="width: 98px; height: 98px; padding:5px;" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+                  <a href="{{url_for('login')}}" name="login">
+                    <img src="{{url_for('static', filename='img/btn_google_signin_dark_normal_web.png')}}"
+                     alt="Sign In" class="google-signin"/>
+                  </a>
+                </div>
+              </div>
+            </li>
           {% endif %}
-          </div>
+          </ul>
         </div>
       </div>
     </nav>

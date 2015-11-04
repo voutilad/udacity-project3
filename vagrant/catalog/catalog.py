@@ -36,11 +36,18 @@ def home():
                            items=items, counts=counts,
                            login_session=login_session)
 
+@APP.route('/loginview')
+def login_view():
+    if login_session is not None and login_session.has_key('credentials'):
+        return request.referrer
+    return render_template('login.j2', login_session=login_session)
 
 @APP.route('/login')
 def login():
-    ''' Overloaded web method. GET will generate View, POST initiates
-        the rest of the OAuth2 protocol and workflow '''
+    ''' Navigates the OAuth2 protocol, inspecting first for an OAuth2 code.
+        If no code, redirects the requestor to the Google signin page to
+        generate one. Google redirects the user back once auth'd.
+    '''
 
     if not request.args.has_key('code'):
         state = security.generate_state()
@@ -100,7 +107,7 @@ def logout():
 ### categories
 
 @APP.route('/catalog/<string:category_id>')
-def show_category(category_id):
+def view_category(category_id):
     ''' Overloaded method:
             * accepts: json - returns JSON object response
             * accepts: html - returns view for Category display
@@ -133,14 +140,14 @@ def new_category():
                                  name=name,
                                  description=description,
                                  created_by_id=user.user_id))
-        return redirect(url_for('show_category',
+        return redirect(url_for('view_category',
                                 category_id=category_id,
                                 login_session=login_session))
     else:
         return render_template('category-new.j2', login_session=login_session)
 
 @APP.route('/catalog/category/<string:category_id>/delete', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='home')
+@SecurityCheck(session=login_session, login_route='view_category')
 def delete_category(category_id):
     ''' Overloaded method:
             * GET - Constructs view for deleting a Category
@@ -177,7 +184,7 @@ def edit_category(category_id):
 ### items
 
 @APP.route('/catalog/<string:category_id>/newitem', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='home')
+@SecurityCheck(session=login_session, login_route='view_category')
 def new_item(category_id):
     ''' Constructs view for adding an Item to a Category '''
     if request.method == 'POST':
@@ -193,7 +200,7 @@ def new_item(category_id):
                     name=name, description=description,
                     created_by_id=user.user_id)
         db.put_item(item)
-        return redirect(url_for('show_category',
+        return redirect(url_for('view_category',
                                 category_id=category_id,
                                 login_session=login_session))
     else:
@@ -217,7 +224,7 @@ def view_item(item_id, category_id):
                            category_name=category_name)
 
 @APP.route('/catalog/<string:category_id>/<string:item_id>/update', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='home')
+@SecurityCheck(session=login_session, login_route='view_item')
 def update_item(item_id, category_id):
     ''' Constructs view for modifying or updating a given item '''
     if request.method == 'POST':
@@ -258,18 +265,18 @@ def update_item(item_id, category_id):
                                state=login_session.get('state', ''))
 
 @APP.route('/catalog/<string:category_id>/<string:item_id>/delete', methods=['GET', 'POST'])
-@SecurityCheck(session=login_session, login_route='home')
+@SecurityCheck(session=login_session, login_route='view_item')
 def delete_item(item_id, category_id):
     ''' REST API for deleting an item '''
     if request.method == 'POST':
         db.delete_item(item_id, category_id)
-        return redirect(url_for('show_category', category_id=category_id,
+        return redirect(url_for('view_category', category_id=category_id,
                                 login_session=login_session))
     else:
         return 'TODO! Sup girl. You want a delete confirmation or something?'
 
 @APP.route('/catalog/item/new', methods=['POST'])
-@SecurityCheck(session=login_session, login_route='home')
+@SecurityCheck(session=login_session, login_route='view_category')
 def create_item():
     ''' REST API for creating new catalog item via POST '''
     if request.json is not None:
