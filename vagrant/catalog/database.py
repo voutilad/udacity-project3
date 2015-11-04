@@ -1,4 +1,5 @@
 ''' Database binding and initialization using SQLAlchemy '''
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.exc import OperationalError
@@ -41,6 +42,7 @@ def init_db():
 
 
 if __name__ == '__main__':
-    print 'Initializing dataBASE...'
+    print 'Initializing database...'
     import database
     database.init_db()
+    print 'Initialization complete!'

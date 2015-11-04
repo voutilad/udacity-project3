@@ -1,5 +1,5 @@
 '''
-Data model for Catalog application leveraging sqlalchemy conventions
+Data model for Catalog application leveraging sqlalchemy conventions.
 '''
 from sqlalchemy import Column, ForeignKey, String, DateTime, text
 from sqlalchemy.orm import relationship

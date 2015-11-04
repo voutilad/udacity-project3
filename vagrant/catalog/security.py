@@ -1,5 +1,6 @@
 '''
-Security classes and methods
+Security classes and methods.
+Includes a Decorator for properly securing some Flask routes.
 '''
 from functools import wraps
 from flask import redirect, url_for, flash
@@ -15,7 +16,21 @@ FLOW = flow_from_clientsecrets('client_secrets.json',
 class SecurityCheck(object):
     '''
     Class used for decorating Flask route definitions with logic for checking
-    if a requesting user is authenticated and allowed to proceed
+    if a requesting user is authenticated and allowed to proceed.
+
+    Example on Flask route:
+
+        @app.route('/delete')
+        @SecurityCheck(session=login_session, login_route='home')
+        def delete_something():
+            ...
+
+    The above checks the Flask session "user_session" to see if a user is
+    properly authenticated. If not, their request is routed instead to
+    the route specified in login_route, e.g. 'home'.
+
+    Also, message flashing is supported and will prompt the user to login.
+
     '''
     __name__ = 'SecurityCheck'
 
@@ -37,8 +52,8 @@ class SecurityCheck(object):
         return decorated_function
 
 def logout_user(username, access_token):
-    ''' Revoke active credentials for a given user, causing them to
-        sign in in the future '''
+    ''' Revoke active credentials for a given user, forcing them to
+        sign-in in the future '''
 
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     http = httplib2.Http()

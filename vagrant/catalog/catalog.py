@@ -11,7 +11,7 @@ import db, utils
 ### security stuff
 from flask import session as login_session
 from security import SecurityCheck
-from werkzeug.utils import secure_filename, escape
+from werkzeug.utils import secure_filename
 import security, os
 
 UPLOAD_PREFIX = './static/'
@@ -36,12 +36,6 @@ def home():
                            items=items, counts=counts,
                            login_session=login_session)
 
-@APP.route('/loginview')
-def login_view():
-    if login_session is not None and login_session.has_key('credentials'):
-        return request.referrer
-    return render_template('login.j2', login_session=login_session)
-
 @APP.route('/login')
 def login():
     ''' Navigates the OAuth2 protocol, inspecting first for an OAuth2 code.
@@ -50,17 +44,19 @@ def login():
     '''
 
     if not request.args.has_key('code'):
+        #Send the user to Google with our state value so they can Auth
         state = security.generate_state()
         login_session['state'] = state
         return redirect(security.get_auth_url(state))
     else:
-        print request.args.get('state', '')
-        print login_session['state']
+        #Redirected back by Google. At this point, User should be auth'd
         if request.args.get('state', '') != login_session['state']:
+            #State's don't match, something goofed up. Bail.
             print 'Failure to auth user. Mismatch states.'
             flash('Failed to sign in.')
             return redirect(url_for('home'))
         else:
+            #State's match! Grab and save user details into the session
             credentials = security.validate_code(request.args.get('code'))
             login_session['credentials'] = credentials.to_json()
             (access_token, user_id) = security.validate_credentials(credentials)
@@ -81,16 +77,16 @@ def login():
         return redirect(url_for('home'))
 
 
-
 @APP.route('/logout')
 def logout():
-    ''' Generate Logout view '''
+    ''' Logs user out from session and disconnects Google session '''
     if login_session is None or not login_session.has_key('credentials'):
-        #user not logged in
+        #user not logged in!
         flash('Huh...no user logged in!')
     else:
         username = login_session['username']
         access_token = login_session['access_token']
+        #Try to logout user
         if security.logout_user(username, access_token) == True:
             flash('Logged out as ' + username)
             del login_session['credentials']
@@ -220,7 +216,7 @@ def new_item(category_id):
 
 @APP.route('/catalog/<string:category_id>/<string:item_id>')
 def view_item(item_id, category_id):
-    ''' Constrcts view for item display. '''
+    ''' Constructs view for item display. '''
     category_name = db.get_category(category_id).name
     item = db.get_item(item_id, category_id)
     creator = db.get_user(item.created_by_id)
@@ -243,6 +239,7 @@ def update_item(item_id, category_id):
         name = request.form['name']
         description = request.form['description']
         new_category_id = request.form['category_id']
+        #Try to get the picture from the form and stage it locally
         picture = None
         image = request.files['file']
         if image and utils.allowed_file(image.filename):

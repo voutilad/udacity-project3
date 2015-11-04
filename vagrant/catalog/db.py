@@ -1,4 +1,7 @@
-''' Database methods for CRUD '''
+'''
+Database methods for CRUD. Simplifies retrieval of objects from the DB
+via sqlalchemy. 
+'''
 from models import Category, Item, User
 from database import DB_SESSION
 from sqlalchemy.exc import IntegrityError
