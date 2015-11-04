@@ -7,19 +7,27 @@
       <h3 class="panel-title">New Item in {{ category_name }}</h3>
     </div>
     <div class="panel-body">
-      <div class="row center-block text-center">
-        <fieldset>
+      <fieldset>
+        <div class="row center-block text-center" style="padding-left: 10px; padding-top: 10px;">
+          <img id="picture" class="item-picture-large" src="{{url_for('static', filename='img/placeholder.png')}}" alt="Click to add an image!"></img>
+          <input id="file" name="file" type="file" class="form-control hidden" size="2" accept="image/*"/>
+        </div>
+        <div class="row center-block text-center">
           <div class="form-group">
-            <div class="input-group center-block" style="width: 45%">
-              <input name="name" type="text" class="form-control"
-                placeholder="Item Name" aria-describedby="Category Name">
-              <input name="description" type="text" class="form-control"
-                placeholder="Description" aria-describedby="Description">
-              <input name="state" type="hidden" value="{{state}}"/>
+            <div class="input-group center-block" style="width: 50%">
+              <input type="text" name="name" class="form-control"
+                   placeholder="Name" aria-describedby="Item Name"/>
             </div>
+            <div class="input-group center-block" style="width: 50%">
+              <input type="text" name="description" class="form-control"
+               placeholder="Description" aria-describedby="Item Description"/>
+            </div>
+            <input id="category_id" type="hidden" name="category_id"
+             value="{{category_id}}"/>
+            <input name="state" type="hidden" value="{{state}}"/>
           </div>
-        </fieldset>
-      </div>
+        </div>
+      </fieldset>
       <div class="row center-block text-center" style="padding-top: 10px;">
         <a class="btn btn-default"
          href="{{url_for('view_category', category_id=category_id)}}">
@@ -34,4 +42,5 @@
     </div>
   </div>
 </form>
+<script src="{{url_for('static', filename='js/image-upload.js')}}"></script>
 {% endblock %}
