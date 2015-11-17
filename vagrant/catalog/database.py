@@ -6,7 +6,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 
 __DATABASE_NAME = 'catalog'
-__DATABAUSE_URI = 'postgresql://vagrant@/' + __DATABASE_NAME
+__DATABAUSE_URI = 'postgresql://catalog@/' + __DATABASE_NAME
 ENGINE = create_engine(__DATABAUSE_URI)
 DB_SESSION = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
@@ -26,7 +26,7 @@ def init_db():
         print 'Database does not exist. Attempting to first create database ' + __DATABASE_NAME
 
         try:
-            conn = create_engine('postgresql://vagrant@/vagrant').connect()
+            conn = create_engine('postgresql://catalog@/catalog').connect()
             conn.execute('commit')
             conn.execute('CREATE DATABASE ' + __DATABASE_NAME + ';')
             conn.close()

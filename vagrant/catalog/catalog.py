@@ -305,7 +305,7 @@ def shutdown_session():
 
 if __name__ == '__main__':
     CONFIG = ConfigParser.SafeConfigParser(
-        {'debug': True, 'host': '0.0.0.0', 'port': 5000})
+        {'debug': False, 'host': '0.0.0.0', 'port': 5000})
     CONFIG.read('config.cfg')
 
     APP.secret_key = CONFIG.get('oauth', 'secret_key')
