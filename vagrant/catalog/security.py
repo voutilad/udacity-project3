@@ -11,7 +11,7 @@ import hashlib, os
 try:
     import mod_wsgi
     # if we get here we must be in prod
-    FLOW = flow_from_clientsecrets('/var/www/catalog/client_secrets.json', scope='openid email', redirect_uri='http://http://ec2-52-34-69-185.us-west-2.compute.amazonaws.com/login')
+    FLOW = flow_from_clientsecrets('/var/www/catalog/client_secrets.json', scope='openid email', redirect_uri='http://ec2-52-34-69-185.us-west-2.compute.amazonaws.com/login')
 except:
     # not running in apache mod_wsgi, most likely local dev
     FLOW = flow_from_clientsecrets('client_secrets.json', scope='openid email', redirect_uri='http://localhost:5000/login')
