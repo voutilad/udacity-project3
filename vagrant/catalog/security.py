@@ -8,9 +8,9 @@ from oauth2client.client import flow_from_clientsecrets, OAuth2Credentials
 import httplib2, json, requests
 import hashlib, os
 
-FLOW = flow_from_clientsecrets('client_secrets.json',
+FLOW = flow_from_clientsecrets(SECRETS_FILE or 'client_secrets.json',
                                scope='openid email',
-                               redirect_uri='http://ec2-52-34-69-185.us-west-2.compute.amazonaws.com/login')
+                               redirect_uri=REDIRECT_URI or 'http://localhost:5000')
 
 # pylint: disable=R0903
 class SecurityCheck(object):

@@ -1,4 +1,15 @@
 #!/usr/bin/python
+"""
+Catalog WSGI script
+---
+
+Wraps the application with some LoggingMiddleware to help debugging.
+
+Need to set some global configs for it to work in WSGI mode:
+    SECRETS_FILE: path to the oauth2 json secrets file
+    REDIRECT_URI: redirect URI settings for OAuth
+
+"""
 import sys
 sys.path.insert(0, '/var/www/catalog')
 
@@ -22,4 +33,8 @@ class LoggingMiddleware:
 
 APP.secret_key = 'dWoB5zTwojK7DNWHuW_jPviS'
 APP.client_id = '896029245869-6fe6tlho709oukgb2pu651q2sdt8udg5.apps.googleusercontent.com'
+
+SECRETS_FILE = '/var/www/catalog/client_secrets.json'
+REDIRECT_URI = 'http://ec2-52-34-69-185.us-west-2.compute.amazonaws.com/login'
+
 application = LoggingMiddleware(APP)
