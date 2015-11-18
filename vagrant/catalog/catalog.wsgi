@@ -13,6 +13,7 @@ Need to set some global configs for it to work in WSGI mode:
 import sys
 sys.path.insert(0, '/var/www/catalog')
 
+import pprint
 from catalog import APP
 
 class LoggingMiddleware:
