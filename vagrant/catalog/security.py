@@ -9,7 +9,7 @@ import httplib2, json, requests
 import hashlib, os
 
 try:
-    import mod_wsgi
+    from mod_wsgi import version
     # if we get here we must be in prod
     FLOW = flow_from_clientsecrets('/var/www/catalog/client_secrets.json', scope='openid email', redirect_uri='http://ec2-52-34-69-185.us-west-2.compute.amazonaws.com/login')
 except:
