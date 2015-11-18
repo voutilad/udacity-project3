@@ -296,7 +296,7 @@ def create_item():
 
 
 @APP.teardown_appcontext
-def shutdown_session():
+def shutdown_session(*args):
     ''' Cleanup database session. '''
     DB_SESSION.remove()
 
