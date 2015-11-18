@@ -14,7 +14,13 @@ from security import SecurityCheck
 from werkzeug.utils import secure_filename
 import security, os
 
-UPLOAD_PREFIX = './static/'
+# Handle production in mod_wsgi
+try:
+    from mod_wsgi import version
+    UPLOAD_PREFIX = '/var/www/catalog/static/'
+except ImportError:
+    UPLOAD_PREFIX = './static/'
+
 UPLOAD_FOLDER = 'uploads'
 
 APP = Flask(__name__)
