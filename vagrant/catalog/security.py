@@ -10,7 +10,7 @@ import hashlib, os
 
 FLOW = flow_from_clientsecrets('client_secrets.json',
                                scope='openid email',
-                               redirect_uri='http://localhost:5000/login')
+                               redirect_uri='http://ec2-52-34-69-185.us-west-2.compute.amazonaws.com/login')
 
 # pylint: disable=R0903
 class SecurityCheck(object):
